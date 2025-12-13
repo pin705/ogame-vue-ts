@@ -12,7 +12,7 @@
     "dev": "vite --port 25121",
     "build": "vue-tsc -b && vite build && node update-build-date.js",
     "preview": "vite preview",
-    "build-pkg:windows": "bun build ./server.js --compile --minify --outfile ogame.exe"
+    "build-pkg:windows": "bun build ./server.js --compile --embed --minify --outfile ogame.exe"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
@@ -21,7 +21,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
-    "express": "^5.2.1",
     "file-saver": "^2.0.5",
     "lucide-vue-next": "^0.556.0",
     "pinia": "^3.0.4",

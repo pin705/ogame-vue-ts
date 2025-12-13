@@ -14,20 +14,32 @@ jobs:
         include:
           - os: windows-latest
             executable: ogame-windows.exe
+            goos: windows
+            goarch: amd64
           - os: ubuntu-latest
             executable: ogame-linux
+            goos: linux
+            goarch: amd64
           - os: macos-latest
             executable: ogame-macos
+            goos: darwin
+            goarch: arm64 # 或者 amd64，取决于你需要的 Mac 架构
 
     steps:
       - uses: actions/checkout@v4
 
+      # 1. 设置 Bun 环境构建 Vue
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      # 获取 package.json 中的版本号
+      # 2. 设置 Go 环境构建后端
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21' # 确保版本支持 //go:embed
+
       - name: Get version
         id: get_version
         shell: bash
@@ -38,19 +50,31 @@ jobs:
       - name: Install Dependencies
         run: bun install
 
-      # 构建前端 Vue 项目
+      # 3. 构建前端 Vue 项目 (生成 docs 目录)
       - name: Build Vue Frontend
         run: bun run build
 
-      # 编译单文件二进制程序
-      - name: Compile Single Executable
+      # 4. 初始化 Go Mod (如果你的仓库里没提交 go.mod)
+      - name: Go Init
         run: |
-          bun build ./server.js --compile --minify --outfile ${{ matrix.executable }}
+          if [ ! -f go.mod ]; then
+            go mod init ogame-app
+          fi
+        shell: bash
+
+      # 5. 使用 Go 编译单文件二进制程序
+      # 注意：我们将环境变量传给 Go 以进行交叉编译
+      - name: Compile Single Executable
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          go build -ldflags="-s -w" -o ${{ matrix.executable }} main.go
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.executable }}
+          name: ${{ matrix.os }}-artifact
           path: ${{ matrix.executable }}
 
     outputs:
@@ -71,9 +95,9 @@ jobs:
           tag_name: ${{ needs.build.outputs.app_version }}
           name: Release ${{ needs.build.outputs.app_version }}
           files: |
-            ogame-windows.exe/ogame-windows.exe
-            ogame-linux/ogame-linux
-            ogame-macos/ogame-macos
+            windows-latest-artifact/ogame-windows.exe
+            ubuntu-latest-artifact/ogame-linux
+            macos-latest-artifact/ogame-macos
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
