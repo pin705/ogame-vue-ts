@@ -63,9 +63,9 @@ OGame Vue TS 是一款受经典 OGame 游戏启发的单机版、基于浏览器
 [MacOS](https://github.com/coolxitech/ogame-vue-ts/releases/latest/download/ogame-macos-arm64)
 
 #### 桌面版
-[Windows](https://github.com/coolxitech/ogame-vue-ts/releases/latest/download/ogame-desktop-windows-amd64.exe)
-[Linux](https://github.com/coolxitech/ogame-vue-ts/releases/latest/download/ogame-desktop-linux-amd64)
-[MacOS](https://github.com/coolxitech/ogame-vue-ts/releases/latest/download/ogame-desktop-macos-arm64)
+[Windows](https://github.com/coolxitech/ogame-vue-ts/releases/latest/download/OGame.Setup.exe)
+[Ubuntu](https://github.com/coolxitech/ogame-vue-ts/releases/latest/download/OGame.AppImage)
+[MacOS](https://github.com/coolxitech/ogame-vue-ts/releases/latest/download/OGame-mac.dmg)
 
 ### 环境要求
 
