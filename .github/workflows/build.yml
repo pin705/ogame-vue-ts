@@ -92,35 +92,56 @@ jobs:
 
   # 3. 发布 Release
   release:
-    needs: [build-server, build-electron]
+    needs: [ build-server, build-electron ]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write  # 必须确保有写权限
+      pull-requests: read
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./assets-to-release
-          merge-multiple: true # 将所有文件平铺在一个目录下
-
-      - name: Get Version for Tagging
+      # 1. 获取版本号
+      - name: Get Version
         id: get_version
-        run: echo "VERSION=v$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=v$VERSION" >> $GITHUB_OUTPUT
 
+      # 2. 创建 Release (先创建，不上传文件)
+      # 这一步能有效避免 404，确保 Release 实体已存在
       - name: Create GitHub Release
+        id: create_release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
           name: Release ${{ steps.get_version.outputs.VERSION }}
-          # 核心修复：显式指定要上传的文件后缀，彻底排除 package.json
-          files: |
-            ./assets-to-release/*.exe
-            ./assets-to-release/*.dmg
-            ./assets-to-release/*.AppImage
-            ./assets-to-release/*.zip
-            ./assets-to-release/ogame-server-*
+          draft: false
+          prerelease: false
           generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. 下载产物并上传到已创建的 Release
+      - name: Download and Upload Assets
+        uses: actions/download-artifact@v4
+        with:
+          path: ./downloads
+          merge-multiple: true
+
+      - name: Upload Assets to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          append_body: true
+          # 显式指定文件名，不带版本号
+          files: |
+            ./downloads/ogame-server-win.exe
+            ./downloads/ogame-server-linux
+            ./downloads/ogame-server-linux-arm64
+            ./downloads/ogame-Setup.exe
+            ./downloads/*.dmg
+            ./downloads/*.AppImage
+            ./downloads/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
