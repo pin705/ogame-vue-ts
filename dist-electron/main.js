@@ -2,11 +2,14 @@ import { BrowserWindow, app } from "electron";
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 app.whenReady().then(() => {
-	let i = dirname(fileURLToPath(import.meta.url)), a = new BrowserWindow({
+	const __dirname = dirname(fileURLToPath(import.meta.url));
+	const win = new BrowserWindow({
 		title: "OGame",
-		icon: path.join(i, "../public/favicon.ico"),
+		icon: path.join(__dirname, "../public/favicon.ico"),
 		width: 1200,
 		height: 800
 	});
-	a.setMenu(null), process.env.VITE_DEV_SERVER_URL ? a.loadURL(process.env.VITE_DEV_SERVER_URL) : a.loadFile("docs/index.html");
+	win.setMenu(null);
+	if (process.env.VITE_DEV_SERVER_URL) win.loadURL(process.env.VITE_DEV_SERVER_URL);
+	else win.loadFile("docs/index.html");
 });
