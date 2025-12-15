@@ -33,8 +33,8 @@ export default defineConfig(async () => {
 
       },
       workbox: {
-        // 关键：确保缓存了 dist 目录下所有的 JS, CSS, HTML 和 媒体文件
-        globPatterns: ['docs/*.{js,css,html,ico,png,svg,mp3,wav,json}'],
+        // 关键：确保缓存了 docs 目录下所有的 JS, CSS, HTML 和 媒体文件
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3,wav,json}'],
 
         // 如果你的游戏资源（如音效或贴图）较大，请根据需要调大这个阈值（默认 2MB）
         // 这里设置为 5MB
