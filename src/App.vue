@@ -320,7 +320,7 @@
         <!-- 内容区域 -->
         <main class="flex-1 overflow-y-auto">
           <Transition name="page" mode="out-in">
-            <div key=$route.fullPath class="h-full">
+            <div :key="$route.fullPath" class="h-full">
               <StarsBackground
                   v-if="isDark"
                   :factor="0.05"
