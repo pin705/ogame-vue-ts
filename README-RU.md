@@ -1,0 +1,184 @@
+<div align="center">
+  <img src="public/logo.svg" alt="OGame Vue TS Logo" width="128" height="128">
+
+  # OGame Vue TS
+
+  Современная космическая стратегическая игра, вдохновлённая классической OGame, созданная на Vue 3 и TypeScript.
+
+  [![GitHub Release](https://img.shields.io/github/v/release/setube/ogame-vue-ts?style=flat&logo=github&label=Release)](https://github.com/setube/ogame-vue-ts/releases/latest)
+  [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+  [![Vue 3](https://img.shields.io/badge/Vue-3.5-brightgreen.svg)](https://vuejs.org/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
+  [![Vite](https://img.shields.io/badge/Vite-7.2-646CFF.svg)](https://vitejs.dev/)
+  [![Go](https://img.shields.io/badge/Go-1.23-79D4FD.svg)](https://golang.org/)
+
+  **Скачать:**
+  [![Android x86_64](https://img.shields.io/badge/Android-x86__64-3DDC84?logo=android&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-x86_64.APK)
+  [![Android arm64](https://img.shields.io/badge/Android-arm64--v8a-3DDC84?logo=android&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-arm64-v8a.APK)
+  [![Android armv7](https://img.shields.io/badge/Android-armeabi--v7a-3DDC84?logo=android&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-armeabi-v7a.APK)
+
+  [![Windows Server](https://img.shields.io/badge/Server-Windows-0078D6?logo=windows&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/ogame-server-win.exe)
+  [![Linux](https://img.shields.io/badge/Server-Linux%20amd64-FCC624?logo=linux&logoColor=black)](https://github.com/setube/ogame-vue-ts/releases/latest/download/ogame-server-linux)
+  [![Linux arm64](https://img.shields.io/badge/Server-Linux%20amd64-FCC624?logo=linux&logoColor=black)](https://github.com/setube/ogame-vue-ts/releases/latest/download/ogame-server-linux-arm64)
+  [![macOS](https://img.shields.io/badge/Server-macOS%20ARM-000000?logo=apple&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-mac.dmg)
+
+  [![Windows Desktop](https://img.shields.io/badge/Desktop-Windows-0078D6?logo=windows&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-Setup.exe)
+  [![Ubuntu Desktop](https://img.shields.io/badge/Desktop-Ubuntu-E95420?logo=ubuntu&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-linux.AppImage)
+  [![macOS Desktop](https://img.shields.io/badge/Desktop-macOS-000000?logo=apple&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-mac.dmg)
+
+  [简体中文](README.md) | [English](README-EN.md) | [繁體中文](README-zh-TW.md) | [Deutsch](README-DE.md) | Русский | [한국어](README-KO.md)
+
+</div>
+
+## О проекте
+
+OGame Vue TS — это однопользовательская браузерная космическая стратегическая игра, вдохновлённая классической OGame. Постройте свою империю в галактике, исследуйте технологии, создавайте космические корабли и участвуйте в эпических космических сражениях. Этот проект создан с использованием современных веб-технологий и полностью работает в браузере с локальным хранением данных.
+
+## Основные возможности
+
+- **Многоязычная поддержка** - Доступно на 6 языках: английский, китайский (упрощённый и традиционный), немецкий, русский и корейский
+- **Управление зданиями** - Стройте и улучшайте различные здания на планетах и лунах
+- **Исследование технологий** - Открывайте передовые технологии для усиления вашей империи
+- **Управление флотом** - Стройте корабли, отправляйте миссии, участвуйте в тактических космических боях
+- **Системы обороны** - Размещайте оборонительные сооружения для защиты ваших колоний
+- **Система офицеров** - Нанимайте офицеров для получения стратегических преимуществ
+- **Боевой симулятор** - Тестируйте боевые сценарии перед вложением ресурсов
+- **Вид галактики** - Исследуйте вселенную и взаимодействуйте с другими планетами
+- **Локальное хранение данных** - Все игровые данные зашифрованы и хранятся локально в браузере
+- **Тёмный/светлый режим** - Выберите предпочитаемую визуальную тему
+- **Управление очередями** - Управляйте несколькими очередями строительства и исследований
+- **Генерация луны** - Вероятностное создание луны из поля обломков
+
+## Технологический стек
+
+- **Frontend-фреймворк:** [Vue 3](https://vuejs.org/) + Composition API (синтаксис `<script setup>`)
+- **Язык программирования:** [TypeScript](https://www.typescriptlang.org/) (со строгой проверкой типов)
+- **Инструмент сборки:** [Vite](https://vitejs.dev/) (Custom Rolldown-Vite 7.2.5), [Golang](https://golang.org/) (для кроссплатформенного веб-сервера), [Electron](https://www.electronjs.org/) (для кроссплатформенного десктоп-приложения)
+- **Управление состоянием:** [Pinia](https://pinia.vuejs.org/) + плагин персистентности
+- **Маршрутизация:** [Vue Router 4](https://router.vuejs.org/)
+- **UI-компоненты:** [shadcn-vue](https://www.shadcn-vue.com/) (стиль New York)
+- **Стилизация:** [Tailwind CSS v4](https://tailwindcss.com/) + CSS-переменные
+- **Иконки:** [Lucide Vue Next](https://lucide.dev/)
+- **Анимации:** [tw-animate-css](https://www.npmjs.com/package/tw-animate-css)
+- **Интернационализация:** Собственная реализация i18n
+
+## Быстрый старт
+
+### Требования
+
+- [Node.js](https://nodejs.org/) (рекомендуется версия 18 или выше)
+- [pnpm](https://pnpm.io/) (версия 10.13.1 или выше)
+- [Go](https://golang.org/) (версия 1.21 или выше) (опционально)
+
+### Установка
+
+```bash
+# Клонировать репозиторий
+git clone https://github.com/setube/ogame-vue-ts.git
+
+# Перейти в директорию проекта
+cd ogame-vue-ts
+
+# Установить зависимости
+pnpm install
+```
+
+### Разработка
+
+```bash
+# Запустить сервер разработки (работает на порту 25121)
+pnpm dev
+```
+
+Откройте браузер и перейдите по адресу `http://localhost:25121`
+
+### Сборка для продакшена
+
+```bash
+# Собрать приложение
+pnpm build
+
+# Предпросмотр продакшен-сборки
+pnpm preview
+```
+
+## Доступные языки
+
+- 简体中文 (Упрощённый китайский)
+- 繁體中文 (Традиционный китайский)
+- English (Английский)
+- Deutsch (Немецкий)
+- Русский
+- 한국어 (Корейский)
+
+## Игровые возможности
+
+### Управление ресурсами
+- **Металл** - Основной строительный материал
+- **Кристалл** - Компонент передовых технологий
+- **Дейтерий** - Топливо и ресурс для исследований
+- **Тёмная материя** - Премиум-ресурс
+- **Энергия** - Питает ваши сооружения
+
+### Типы зданий
+- **Ресурсные здания** - Металлоплавильня, Кристальный завод, Синтезатор дейтерия, Солнечная электростанция
+- **Сооружения** - Завод роботов, Верфь, Исследовательская лаборатория, Хранилища
+- **Специальные здания** - Фабрика нанитов, Терраформер и другие
+
+### Технологии
+- **Энергетическая технология** - Повышает энергоэффективность
+- **Лазерная технология** - Улучшает системы вооружения
+- **Ионная технология** - Продвинутая двигательная установка и оружие
+- **Гиперпространственная технология** - Обеспечивает более быстрые перелёты
+- **Плазменная технология** - Максимальные системы вооружения
+- И многое другое...
+
+### Классы кораблей
+- **Гражданские корабли** - Малый/Большой транспорт, Колонизатор, Переработчик
+- **Боевые корабли** - Лёгкий/Тяжёлый истребитель, Крейсер, Линкор, Бомбардировщик
+- **Специальные корабли** - Звезда Смерти, Линейный крейсер, Разрушитель
+
+### Системы обороны
+- Ракетная установка, Лёгкий/Тяжёлый лазер, Пушка Гаусса
+- Ионное орудие, Плазменная турель
+- Малый/Большой защитный купол
+
+## Безопасность данных
+
+Все игровые данные автоматически шифруются с помощью AES перед сохранением в локальном хранилище браузера. Ваш игровой прогресс защищён и приватен.
+
+## Кастомизация
+
+Приложение поддерживает полную настройку темы через CSS-переменные Tailwind, определённые в `src/style.css`. Вы можете легко переключаться между светлым и тёмным режимами.
+
+## Участие в разработке
+
+Приветствуем вклад в проект! Пожалуйста, не стесняйтесь создавать issues или pull requests.
+
+## Лицензия
+
+Эта работа лицензирована под [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/).
+
+### Вы можете:
+- **Делиться** — копировать и распространять материал в любом формате или на любом носителе
+- **Адаптировать** — ремиксовать, преобразовывать и создавать на основе материала
+
+### При соблюдении следующих условий:
+- **Атрибуция** — Вы должны указать соответствующую атрибуцию, предоставить ссылку на лицензию и указать, были ли внесены изменения
+- **Некоммерческое использование** — Вы не можете использовать материал в коммерческих целях
+
+## Благодарности
+
+Этот проект вдохновлён оригинальной браузерной игрой [OGame](https://ogame.org/). Все игровые механики и элементы дизайна были переосмыслены в образовательных и развлекательных целях.
+
+## Отказ от ответственности
+
+Этот проект не связан с Gameforge AG или официальной игрой OGame, не одобрен и не поддерживается ими. Это независимый фан-проект, созданный в образовательных целях и для личного развлечения.
+
+---
+
+<div align="center">
+  Сделано с ❤️ автором <a href="https://github.com/setube">setube</a>
+  <br>
+  © 2025 - Все права защищены (кроме прав, предоставленных лицензией CC BY-NC 4.0)
+</div>

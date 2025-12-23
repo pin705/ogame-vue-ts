@@ -81,18 +81,28 @@
 
             <div class="text-xs sm:text-sm space-y-0.5 sm:space-y-1">
               <div class="flex items-center gap-1.5 text-muted-foreground">
-                <Clock :size="14" class="flex-shrink-0" />
+                <Clock :size="14" class="shrink-0" />
                 <span>{{ formatTime(getBuildingTime(buildingType, getBuildingLevel(buildingType) + 1)) }}</span>
               </div>
               <div class="flex items-center gap-1.5 text-muted-foreground">
-                <Grid3x3 :size="14" class="flex-shrink-0" />
+                <Grid3x3 :size="14" class="shrink-0" />
                 <span>{{ BUILDINGS[buildingType].spaceUsage }}</span>
               </div>
             </div>
 
             <!-- 升级按钮 -->
-            <Button @click="handleUpgrade(buildingType)" :disabled="!canUpgrade(buildingType)" class="w-full">
+            <Button @click="handleUpgrade(buildingType, $event)" :disabled="!canUpgrade(buildingType)" class="w-full">
               {{ getUpgradeButtonText(buildingType) }}
+            </Button>
+
+            <!-- 添加到等待队列按钮 -->
+            <Button
+              v-if="canAddToWaitingQueue(buildingType)"
+              @click="handleAddToWaiting(buildingType, $event)"
+              variant="outline"
+              class="w-full"
+            >
+              {{ t('queue.addToWaiting') }}
             </Button>
 
             <!-- 拆除按钮 -->
@@ -134,8 +144,8 @@
           <AlertDialogDescription v-else>
             <div class="space-y-2">
               <div v-for="(req, index) in alertDialogRequirements" :key="index" class="flex items-center gap-2 text-sm">
-                <Check v-if="req.met" :size="16" class="text-green-500 flex-shrink-0" />
-                <X v-else :size="16" class="text-red-500 flex-shrink-0" />
+                <Check v-if="req.met" :size="16" class="text-green-500 shrink-0" />
+                <X v-else :size="16" class="text-red-500 shrink-0" />
                 <span>{{ req.name }}: Lv {{ req.requiredLevel }} ({{ t('common.current') }}: Lv {{ req.currentLevel }})</span>
               </div>
             </div>
@@ -176,8 +186,8 @@
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
   import { Button } from '@/components/ui/button'
   import { Badge } from '@/components/ui/badge'
-  import ResourceIcon from '@/components/ResourceIcon.vue'
-  import CardUnlockOverlay from '@/components/CardUnlockOverlay.vue'
+  import ResourceIcon from '@/components/common/ResourceIcon.vue'
+  import CardUnlockOverlay from '@/components/common/CardUnlockOverlay.vue'
   import {
     AlertDialog,
     AlertDialogAction,
@@ -195,6 +205,8 @@
   import * as publicLogic from '@/logic/publicLogic'
   import * as officerLogic from '@/logic/officerLogic'
   import * as gameLogic from '@/logic/gameLogic'
+  import * as waitingQueueLogic from '@/logic/waitingQueueLogic'
+  import { triggerQueueAnimation } from '@/composables/useQueueAnimation'
 
   const gameStore = useGameStore()
   const detailDialog = useDetailDialogStore()
@@ -263,7 +275,7 @@
   }
 
   // 升级建筑
-  const handleUpgrade = (buildingType: BuildingType) => {
+  const handleUpgrade = (buildingType: BuildingType, event: MouseEvent) => {
     // 检查前置条件
     if (!checkUpgradeRequirements(buildingType)) {
       alertDialogTitle.value = t('common.requirementsNotMet')
@@ -280,6 +292,9 @@
       alertDialogMessage.value = result.reason ? t(result.reason) : t('buildingsView.upgradeFailedMessage')
       alertDialogShowRequirements.value = false
       alertDialogOpen.value = true
+    } else {
+      // 触发抛物线动画
+      triggerQueueAnimation(event, 'building')
     }
   }
 
@@ -432,12 +447,8 @@
   }
 
   const handleDemolish = (buildingType: BuildingType) => {
-    const buildingName = BUILDINGS.value[buildingType].name
     const refund = getDemolishRefund(buildingType)
-
-    demolishConfirmMessage.value = `${t('buildingsView.confirmDemolishMessage')}: ${buildingName}
-
-${t('buildingsView.demolishRefund')}:
+    demolishConfirmMessage.value = `${t('buildingsView.demolishRefund')}:
 ${t('resources.metal')}: ${formatNumber(refund.metal)}
 ${t('resources.crystal')}: ${formatNumber(refund.crystal)}
 ${t('resources.deuterium')}: ${formatNumber(refund.deuterium)}${
@@ -481,5 +492,81 @@ ${t('resources.deuterium')}: ${formatNumber(refund.deuterium)}${
   const getDemolishRefund = (buildingType: BuildingType): Resources => {
     const currentLevel = getBuildingLevel(buildingType)
     return buildingLogic.calculateDemolishRefund(buildingType, currentLevel)
+  }
+
+  // 检查是否可以添加到等待队列
+  const canAddToWaitingQueue = (buildingType: BuildingType): boolean => {
+    if (!planet.value) return false
+
+    const config = BUILDINGS.value[buildingType]
+    const currentLevel = getBuildingLevel(buildingType)
+
+    // 计算目标等级：当前等级 + 正式队列中的升级数 + 等待队列中的升级数 + 1
+    const upgradesInBuildQueue = planet.value.buildQueue.filter(q => q.type === 'building' && q.itemType === buildingType).length
+    const waitingQueue = planet.value.waitingBuildQueue || []
+    const upgradesInWaitingQueue = waitingQueue.filter(q => q.type === 'building' && q.itemType === buildingType).length
+    const targetLevel = currentLevel + upgradesInBuildQueue + upgradesInWaitingQueue + 1
+
+    // 检查是否达到等级上限（使用计算后的目标等级）
+    if (config.maxLevel !== undefined && targetLevel > config.maxLevel) {
+      return false
+    }
+
+    // 检查目标等级的前置条件是否满足
+    // 如果该建筑已经在队列中（正式或等待），说明基本条件已满足，跳过检查
+    const alreadyInQueue = upgradesInBuildQueue > 0 || upgradesInWaitingQueue > 0
+    if (!alreadyInQueue) {
+      // 第一次添加时，检查当前等级+1的前置条件
+      if (!checkUpgradeRequirements(buildingType)) {
+        return false
+      }
+    } else {
+      // 后续添加时，检查目标等级的前置条件
+      const requirements = publicLogic.getLevelRequirements(config, targetLevel)
+      if (requirements && Object.keys(requirements).length > 0) {
+        if (!publicLogic.checkRequirements(planet.value, gameStore.player.technologies, requirements)) {
+          return false
+        }
+      }
+    }
+
+    // 建筑可以多次排队（比如金属矿升级到2、3、4、5级）
+    // 只需要检查等待队列是否已满
+    const bonuses = officerLogic.calculateActiveBonuses(gameStore.player.officers, Date.now())
+    const maxWaitingQueue = waitingQueueLogic.getMaxBuildWaitingQueue(planet.value, bonuses.additionalBuildQueue)
+    if (waitingQueue.length >= maxWaitingQueue) {
+      return false
+    }
+
+    return true
+  }
+
+  // 添加到等待队列
+  const handleAddToWaiting = (buildingType: BuildingType, event: MouseEvent) => {
+    if (!planet.value) return
+
+    const currentLevel = getBuildingLevel(buildingType)
+
+    // 计算目标等级：当前等级 + 正式队列中的升级数 + 等待队列中的升级数 + 1
+    const upgradesInBuildQueue = planet.value.buildQueue.filter(q => q.type === 'building' && q.itemType === buildingType).length
+    const waitingQueue = planet.value.waitingBuildQueue || []
+    const upgradesInWaitingQueue = waitingQueue.filter(q => q.type === 'building' && q.itemType === buildingType).length
+    const targetLevel = currentLevel + upgradesInBuildQueue + upgradesInWaitingQueue + 1
+
+    const item = waitingQueueLogic.createBuildingWaitingItem(buildingType, targetLevel, planet.value.id)
+
+    const result = waitingQueueLogic.canAddToBuildWaitingQueue(planet.value, item, gameStore.player.officers)
+    if (!result.canAdd) {
+      alertDialogTitle.value = t('queue.waitingQueueFull')
+      alertDialogMessage.value = result.reason ? t(result.reason) : ''
+      alertDialogShowRequirements.value = false
+      alertDialogOpen.value = true
+      return
+    }
+
+    // 触发抛物线动画
+    triggerQueueAnimation(event, 'building')
+
+    waitingQueueLogic.addToBuildWaitingQueue(planet.value, item)
   }
 </script>

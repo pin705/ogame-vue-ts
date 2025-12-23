@@ -1,5 +1,5 @@
 import type { NPC, Planet, Player } from '@/types/game'
-import { TechnologyType, BuildingType, ShipType, DefenseType } from '@/types/game'
+import { TechnologyType, BuildingType, ShipType, DefenseType, NPCAIType } from '@/types/game'
 import { BUILDINGS, SHIPS, TECHNOLOGIES } from '@/config/gameConfig'
 import * as buildingLogic from './buildingLogic'
 import * as researchLogic from './researchLogic'
@@ -724,6 +724,40 @@ export const calculateDistanceDifficultyMultiplier = (distance: number): Distanc
 }
 
 /**
+ * 随机生成 NPC 的 AI 类型
+ * 分布概率:
+ * - Balanced: 35% （平衡型最常见）
+ * - Aggressive: 25% （侵略型较常见）
+ * - Defensive: 20% （防守型中等）
+ * - Expansionist: 15% （扩张型较少）
+ * - Trader: 5% （商人型最稀少）
+ */
+export const generateRandomAIType = (): NPCAIType => {
+  const roll = Math.random() * 100
+  if (roll < 35) return NPCAIType.Balanced
+  if (roll < 60) return NPCAIType.Aggressive
+  if (roll < 80) return NPCAIType.Defensive
+  if (roll < 95) return NPCAIType.Expansionist
+  return NPCAIType.Trader
+}
+
+/**
+ * 确保 NPC 有 AI 类型，如果没有则随机分配
+ */
+export const ensureNPCAIType = (npc: NPC): void => {
+  if (!npc.aiType) {
+    npc.aiType = generateRandomAIType()
+  }
+}
+
+/**
+ * 确保所有 NPC 都有 AI 类型
+ */
+export const ensureAllNPCsAIType = (npcs: NPC[]): void => {
+  npcs.forEach(npc => ensureNPCAIType(npc))
+}
+
+/**
  * 基于距离难度初始化NPC星球
  * 替代旧的 initializeNPCStartingPower
  *
@@ -732,10 +766,7 @@ export const calculateDistanceDifficultyMultiplier = (distance: number): Distanc
  * 资源上限：基于仓储建筑等级计算 (10000 * 2^level)
  * 舰队数量：基于船坞等级和难度等级合理计算
  */
-export const initializeNPCByDistance = (
-  npc: NPC,
-  homeworldPosition: { galaxy: number; system: number; position: number }
-): void => {
+export const initializeNPCByDistance = (npc: NPC, homeworldPosition: { galaxy: number; system: number; position: number }): void => {
   const planet = npc.planets[0]
   if (!planet) return
 
@@ -745,6 +776,9 @@ export const initializeNPCByDistance = (
   // 保存距离和难度等级到NPC
   npc.distanceToHomeworld = distance
   npc.difficultyLevel = calculateDifficultyLevel(distance)
+
+  // 分配随机 AI 类型（如果还没有）
+  ensureNPCAIType(npc)
 
   // 基础等级 * 倍率，并限制上限
   const baseLevel = 5
@@ -797,11 +831,11 @@ export const initializeNPCByDistance = (
   // 分配舰队比例
   planet.fleet[ShipType.EspionageProbe] = Math.max(5, Math.floor(baseFleetCount * 0.05))
   planet.fleet[ShipType.LightFighter] = Math.floor(baseFleetCount * 0.35)
-  planet.fleet[ShipType.HeavyFighter] = Math.floor(baseFleetCount * 0.20)
+  planet.fleet[ShipType.HeavyFighter] = Math.floor(baseFleetCount * 0.2)
   planet.fleet[ShipType.Cruiser] = Math.floor(baseFleetCount * 0.15)
   planet.fleet[ShipType.Battleship] = Math.floor(baseFleetCount * 0.05)
-  planet.fleet[ShipType.SmallCargo] = Math.floor(baseFleetCount * 0.10)
-  planet.fleet[ShipType.Recycler] = Math.floor(baseFleetCount * 0.10)
+  planet.fleet[ShipType.SmallCargo] = Math.floor(baseFleetCount * 0.1)
+  planet.fleet[ShipType.Recycler] = Math.floor(baseFleetCount * 0.1)
 
   // 设置防御设施（基于难度等级，合理范围）
   const defenseScale = difficultyLevel * 5

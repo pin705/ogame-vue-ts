@@ -45,10 +45,13 @@ export default {
     requirementsNotMet: '必要条件が満たされていません',
     current: '現在',
     level: 'レベル',
+    to: '〜',
     gmModeActivated: 'GMモードが有効になりました！ナビゲーションメニューをご確認ください。',
     view: '表示',
+    viewDetails: '詳細を見る',
     exitConfirmTitle: 'ゲーム終了',
-    exitConfirmMessage: 'ゲームを終了しますか？進行状況は自動的に保存されます。'
+    exitConfirmMessage: 'ゲームを終了しますか？進行状況は自動的に保存されます。',
+    points: 'ポイント'
   },
   errors: {
     requirementsNotMet: '前提条件を満たしていません',
@@ -85,6 +88,7 @@ export default {
     galaxy: '銀河',
     diplomacy: '外交',
     achievements: '実績',
+    ranking: 'ランキング',
     messages: 'メッセージ',
     settings: '設定',
     guide: 'ゲームガイド',
@@ -111,7 +115,8 @@ export default {
     perHour: '時間',
     perMinute: '分',
     hour: '時間',
-    noEnergy: 'エネルギー不足'
+    noEnergy: 'エネルギー不足',
+    temperatureBonus: '温度ボーナス'
   },
   energy: {
     lowWarning: 'エネルギー不足！資源生産が停止しています！',
@@ -120,6 +125,12 @@ export default {
     noProduction: 'エネルギー不足！資源生産が停止しています！',
     deficitDetail: 'エネルギー不足: {deficit}、発電所を建設してください',
     buildSolarPlant: '発電所を建設'
+  },
+  oreDeposit: {
+    lowWarning: '鉱床が減少しています！',
+    depletedWarning: '鉱床が枯渇しました！',
+    depletedResources: '枯渇: {resources}',
+    lowResources: '残りわずか: {resources}'
   },
   planet: {
     planet: '惑星',
@@ -187,12 +198,20 @@ export default {
     researchSpeedBonus: '研究速度ボーナス',
     planetSpace: 'Planet Space',
     moonSpace: 'Moon Space',
-    missileCapacity: 'Missile Capacity'
+    missileCapacity: 'Missile Capacity',
+
+    // 鉱脈埋蔵量
+    oreDeposit: '鉱脈埋蔵量',
+    remainingDeposit: '残り',
+    depletionTime: '枯渇予測',
+    depositDepleted: '枯渇',
+    depositWarning: '警告：鉱脈埋蔵量が残りわずか（10%以下）！',
+    depositDepletedMessage: '鉱脈が枯渇しました。生産が停止しています。'
   },
   buildingDescriptions: {
     metalMine: '金属資源を採掘',
     crystalMine: 'クリスタル資源を採掘',
-    deuteriumSynthesizer: '重水素資源を合成',
+    deuteriumSynthesizer: '重水素資源を合成（低温ほど産出量増加）',
     solarPlant: 'エネルギーを供給',
     fusionReactor: '重水素を使用して大量のエネルギーを生成',
     roboticsFactory: '建設速度を向上',
@@ -242,7 +261,7 @@ export default {
     colonyShip: '新惑星の植民に使用',
     recycler: 'デブリフィールドの資源を回収',
     espionageProbe: '敵惑星を偵察',
-    solarSatellite: '追加エネルギーを提供、衛星1つにつき50エネルギー生成',
+    solarSatellite: '追加エネルギーを提供、惑星温度により産出量変動（高温ほど高産出）',
     darkMatterHarvester: 'ダークマター採取専用の特殊艦',
     deathstar: '惑星全体を破壊できる究極兵器'
   },
@@ -367,8 +386,16 @@ export default {
       buildings: '建物',
       research: '研究',
       ships: '艦船',
-      defense: '防衛'
-    }
+      defense: '防衛',
+      waiting: '待機'
+    },
+    waitingEmpty: '待機中のタスクはありません',
+    addToWaiting: '待機キューに追加',
+    remove: '削除',
+    resourcesReady: '準備完了',
+    waitingResources: '待機中',
+    waitingQueueFull: '待機キューが満杯です',
+    movedToQueue: 'タスクがキューに移動しました'
   },
   shipyard: {
     attack: '攻撃力',
@@ -398,7 +425,10 @@ export default {
     consumptionSourcesDesc: '建物のエネルギー消費詳細',
     totalProduction: '総生産量',
     totalConsumption: '総消費量',
-    noConsumption: 'エネルギー消費なし'
+    noConsumption: 'エネルギー消費なし',
+    tabOverview: '概要',
+    tabProduction: '生産詳細',
+    tabConsumption: '消費詳細'
   },
   buildingsView: {
     title: '建物',
@@ -513,6 +543,29 @@ export default {
     spy: '偵察',
     deploy: '配備',
     expedition: '探検',
+    expeditionZone: '探検エリア',
+    expeditionZoneDesc: '目的地を選択してください。エリアによってリスクと報酬が異なります',
+    requiresAstro: '宇宙物理学レベル {level} が必要',
+    reward: '報酬',
+    danger: '危険',
+    zones: {
+      nearSpace: {
+        name: '近宇宙',
+        desc: '安全な近宇宙、リスクは低いが報酬も少ない'
+      },
+      deepSpace: {
+        name: '深宇宙',
+        desc: '恒星から遠く離れた場所、より多くの資源が見つかる可能性'
+      },
+      unchartedSpace: {
+        name: '未知の宇宙',
+        desc: '未探索のエリア、ハイリスク・ハイリターン'
+      },
+      dangerousNebula: {
+        name: '危険な星雲',
+        desc: '未知の危険に満ちた星雲、しかし非常に豊かな宝物を含む'
+      }
+    },
     recycle: '回収',
     transportResources: '資源輸送',
     totalCargoCapacity: '総積載量',
@@ -567,7 +620,24 @@ export default {
     presetName: 'プリセット名',
     presetNamePlaceholder: 'プリセット名を入力',
     deletePresetTitle: 'プリセット削除',
-    deletePresetMessage: 'プリセット「{name}」を削除しますか？この操作は取り消せません。'
+    deletePresetMessage: 'プリセット「{name}」を削除しますか？この操作は取り消せません。',
+    // ジャンプゲート
+    jumpGate: 'ジャンプゲート',
+    jumpGateDescription: 'ジャンプゲートを使用して、他のジャンプゲートがある月へ艦隊を瞬時に転送',
+    jumpGateNotAvailable: 'ジャンプゲート使用不可',
+    jumpGateRequiresMoon: 'ジャンプゲートは月でのみ使用可能',
+    jumpGateNotBuilt: '現在の月にジャンプゲートがありません',
+    jumpGateCooldown: 'ジャンプゲートクールダウン中',
+    jumpGateCooldownRemaining: '残りクールダウン時間',
+    jumpGateReady: 'ジャンプゲート準備完了',
+    jumpGateSelectTarget: '目標の月を選択',
+    jumpGateNoTargetMoons: '利用可能な目標の月がありません（ジャンプゲートとクールダウン完了が必要）',
+    jumpGateSelectFleet: '転送する艦隊を選択',
+    jumpGateTransfer: '艦隊を転送',
+    jumpGateSuccess: 'ジャンプゲート転送成功',
+    jumpGateSuccessMessage: '艦隊は{target}へ瞬時に転送されました',
+    jumpGateFailed: 'ジャンプゲート転送失敗',
+    jumpGateFailedMessage: 'ジャンプゲートの状態と艦隊構成を確認してください'
   },
   officersView: {
     title: '士官',
@@ -626,6 +696,8 @@ export default {
     switch: '切り替え',
     recycle: '回収',
     debrisField: 'デブリフィールド',
+    oreDeposits: '鉱脈埋蔵量',
+    deposits: '埋蔵量',
     scoutPlanetTitle: '惑星偵察',
     attackPlanetTitle: '惑星攻撃',
     missileAttackTitle: 'ミサイル攻撃',
@@ -648,7 +720,9 @@ export default {
     debris: '破片',
     giftPlanetTitle: 'ギフト送信',
     giftPlanetMessage: '惑星[{coordinates}]にリソースを贈りますか？\n\n艦隊ページに移動して輸送船を選択し、リソースを積載してください。',
-    npcPlanetName: '{name}の惑星'
+    npcPlanetName: '{name}の惑星',
+    intercepted: '迎撃済み',
+    defenseLosses: '防衛損失'
   },
   messagesView: {
     title: 'メッセージセンター',
@@ -672,6 +746,8 @@ export default {
     attackerLosses: '攻撃側損失',
     defenderLosses: '防御側損失',
     noLosses: '損失なし',
+    losses: '損失',
+    remainingUnits: '残存ユニット',
     plunder: '略奪資源',
     debrisField: 'デブリフィールド',
     resources: '資源',
@@ -689,6 +765,18 @@ export default {
     round: '第{round}ラウンド',
     attackerRemainingPower: '攻撃側残存火力',
     defenderRemainingPower: '防御側残存火力',
+    // 戦闘アニメーション
+    playAnimation: 'アニメーション再生',
+    showDetails: '詳細表示',
+    speed: '速度',
+    power: '戦闘力',
+    battleLogEmpty: '戦闘ログは空です',
+    roundStarted: '第{round}ラウンド開始',
+    shipDestroyed: '{ship}が{count}隻撃破',
+    defenseDestroyed: '{defense}が{count}基撃破',
+    attackerWins: '攻撃側勝利',
+    defenderWins: '防御側勝利',
+    roundsPlayed: 'ラウンド完了',
     spied: '偵察された',
     spiedNotification: '偵察通知',
     noSpiedNotifications: '偵察通知はありません',
@@ -897,6 +985,7 @@ export default {
     inAppNotifications: 'アプリ内通知',
     constructionComplete: '建設完了',
     researchComplete: '研究完了',
+    unlockNotification: '解放通知',
     browserPermission: 'ブラウザ通知を有効にする',
     permissionGranted: '許可されました',
     permissionDenied: '許可が拒否されたか、付与されていません',
@@ -904,11 +993,22 @@ export default {
     notificationsDisabled: '特定の通知を設定するには、上記のスイッチを有効にしてください',
     suppressInFocus: 'ページにフォーカスがある場合、ブラウザ通知を抑制する',
     expandTypes: '詳細を展開',
-    collapseTypes: '詳細を折りたたむ'
+    collapseTypes: '詳細を折りたたむ',
+    // NPC名前更新
+    npcNameUpdate: 'NPC名前更新',
+    npcNameUpdateTitle: '旧形式のNPC名を検出',
+    npcNameUpdateMessage: '{count}件のNPCが旧形式の名前を使用しています。新しいローカライズ名に更新しますか？',
+    npcNameUpdateConfirm: '名前を更新',
+    npcNameUpdateCancel: '現状維持',
+    npcNameUpdateSuccess: '{count}件のNPC名を更新しました',
+    npcNameUpdateSkipped: 'NPC名の更新をスキップしました'
   },
   notifications: {
     constructionComplete: '建設完了',
-    researchComplete: '研究完了'
+    researchComplete: '研究完了',
+    newUnlock: '新コンテンツ解放',
+    building: '建物',
+    technology: '技術'
   },
   gmView: {
     title: 'GMコントロールパネル',
@@ -1144,6 +1244,21 @@ export default {
         attackCooldown: '攻撃クールダウン中（{min}分{sec}秒）',
         notSpiedYet: '未偵察、先に偵察が必要'
       }
+    },
+    aiType: 'AIタイプ',
+    aiTypes: {
+      aggressive: '攻撃型',
+      defensive: '防御型',
+      trader: '商人型',
+      expansionist: '拡張型',
+      balanced: 'バランス型'
+    },
+    aiTypeDescriptions: {
+      aggressive: '積極的に偵察・攻撃、強い報復',
+      defensive: '滅多に攻撃しない、攻撃されると強く報復',
+      trader: 'ほとんど攻撃しない、取引と贈り物を好む',
+      expansionist: '発展に集中、攻撃性が低い',
+      balanced: '状況に応じて戦略を動的に調整'
     }
   },
   pagination: {
@@ -1295,7 +1410,8 @@ export default {
     },
     achievements: {
       title: '実績システム',
-      message: 'ゲーム目標を達成して実績をアンロックし、ダークマター報酬を獲得！実績には複数のティアがあり、高い目標に挑戦してより良い報酬を手に入れましょう。'
+      message:
+        'ゲーム目標を達成して実績をアンロックし、ダークマター報酬を獲得！実績には複数のティアがあり、高い目標に挑戦してより良い報酬を手に入れましょう。'
     },
     settings: {
       title: '設定',
@@ -1402,5 +1518,24 @@ export default {
       robbed: 'NPCに残骸を回収された回数',
       lostToNPC: 'NPCに奪われた残骸資源総量'
     }
+  },
+  ranking: {
+    title: 'ランキング',
+    totalPlayers: '{count} プレイヤー',
+    yourRanking: 'あなたの順位',
+    categories: {
+      total: '総合',
+      building: '建設',
+      research: '研究',
+      fleet: '艦隊',
+      defense: '防衛'
+    },
+    points: 'pt',
+    name: '名前',
+    planets: '惑星',
+    details: '詳細',
+    you: 'あなた',
+    scoreBreakdown: 'スコア内訳',
+    noData: 'ランキングデータがありません'
   }
 }

@@ -45,10 +45,13 @@ export default {
     requirementsNotMet: '요구사항 미충족',
     current: '현재',
     level: '레벨',
+    to: '~',
     gmModeActivated: 'GM 모드가 활성화되었습니다! 탐색 메뉴를 확인하세요.',
     view: '보기',
+    viewDetails: '상세 보기',
     exitConfirmTitle: '게임 종료',
-    exitConfirmMessage: '게임을 종료하시겠습니까? 진행 상황은 자동으로 저장됩니다.'
+    exitConfirmMessage: '게임을 종료하시겠습니까? 진행 상황은 자동으로 저장됩니다.',
+    points: '포인트'
   },
   errors: {
     requirementsNotMet: '전제 조건 미충족',
@@ -85,6 +88,7 @@ export default {
     galaxy: '은하계',
     diplomacy: '외교',
     achievements: '업적',
+    ranking: '랭킹',
     messages: '메시지',
     settings: '설정',
     gm: 'GM'
@@ -110,7 +114,8 @@ export default {
     perHour: '시간',
     perMinute: '분',
     hour: '시간',
-    noEnergy: '에너지 부족'
+    noEnergy: '에너지 부족',
+    temperatureBonus: '온도 보너스'
   },
   energy: {
     lowWarning: '에너지 부족! 자원 생산 중단!',
@@ -119,6 +124,12 @@ export default {
     noProduction: '에너지 부족! 자원 생산 중단!',
     deficitDetail: '에너지 부족: {deficit}, 발전소를 더 건설하세요',
     buildSolarPlant: '발전소 건설'
+  },
+  oreDeposit: {
+    lowWarning: '광맥이 부족합니다!',
+    depletedWarning: '광맥이 고갈되었습니다!',
+    depletedResources: '고갈됨: {resources}',
+    lowResources: '곧 고갈: {resources}'
   },
   planet: {
     planet: '행성',
@@ -186,12 +197,20 @@ export default {
     researchSpeedBonus: '연구 속도 보너스',
     planetSpace: 'Planet Space',
     moonSpace: 'Moon Space',
-    missileCapacity: 'Missile Capacity'
+    missileCapacity: 'Missile Capacity',
+
+    // 광맥 매장량
+    oreDeposit: '광맥 매장량',
+    remainingDeposit: '남은 양',
+    depletionTime: '고갈 예상',
+    depositDepleted: '고갈됨',
+    depositWarning: '경고: 광맥 매장량이 거의 고갈되었습니다 (10% 미만)!',
+    depositDepletedMessage: '광맥이 고갈되었습니다. 생산이 중단되었습니다.'
   },
   buildingDescriptions: {
     metalMine: '금속 자원 채굴',
     crystalMine: '크리스탈 자원 채굴',
-    deuteriumSynthesizer: '중수소 자원 합성',
+    deuteriumSynthesizer: '중수소 자원 합성 (온도가 낮을수록 생산량 증가)',
     solarPlant: '에너지 제공',
     fusionReactor: '중수소를 사용하여 대량의 에너지 생산',
     roboticsFactory: '건설 속도 향상',
@@ -241,7 +260,7 @@ export default {
     colonyShip: '새로운 행성 식민에 사용',
     recycler: '잔해장 자원 수집',
     espionageProbe: '적 행성 정찰',
-    solarSatellite: '추가 에너지 제공, 위성당 50 에너지 생성',
+    solarSatellite: '추가 에너지 제공, 행성 온도에 따라 생산량 변동 (온도가 높을수록 증가)',
     darkMatterHarvester: '암흑 물질 채취 전용 특수 함선',
     deathstar: '행성 전체를 파괴할 수 있는 궁극 병기'
   },
@@ -366,8 +385,16 @@ export default {
       buildings: '건물',
       research: '연구',
       ships: '함선',
-      defense: '방어'
-    }
+      defense: '방어',
+      waiting: '대기'
+    },
+    waitingEmpty: '대기 중인 작업이 없습니다',
+    addToWaiting: '대기열에 추가',
+    remove: '제거',
+    resourcesReady: '준비 완료',
+    waitingResources: '대기 중',
+    waitingQueueFull: '대기열이 가득 찼습니다',
+    movedToQueue: '작업이 대기열로 이동되었습니다'
   },
   overview: {
     title: '행성 개요',
@@ -380,7 +407,10 @@ export default {
     consumptionSourcesDesc: '건물 에너지 소비 세부 정보',
     totalProduction: '총 생산량',
     totalConsumption: '총 소비량',
-    noConsumption: '에너지 소비 없음'
+    noConsumption: '에너지 소비 없음',
+    tabOverview: '개요',
+    tabProduction: '생산 상세',
+    tabConsumption: '소비 상세'
   },
   buildingsView: {
     title: '건물',
@@ -512,6 +542,29 @@ export default {
     spy: '정찰',
     deploy: '배치',
     expedition: '탐험',
+    expeditionZone: '탐험 구역',
+    expeditionZoneDesc: '목적지를 선택하세요. 구역마다 위험과 보상이 다릅니다',
+    requiresAstro: '천체물리학 레벨 {level} 필요',
+    reward: '보상',
+    danger: '위험',
+    zones: {
+      nearSpace: {
+        name: '근우주',
+        desc: '안전한 근우주, 위험은 낮지만 보상도 적음'
+      },
+      deepSpace: {
+        name: '심우주',
+        desc: '항성에서 멀리 떨어진 곳, 더 많은 자원을 발견할 수 있음'
+      },
+      unchartedSpace: {
+        name: '미지의 우주',
+        desc: '탐험되지 않은 구역, 고위험 고수익'
+      },
+      dangerousNebula: {
+        name: '위험한 성운',
+        desc: '알 수 없는 위험으로 가득한 성운, 하지만 매우 풍부한 보물을 품고 있음'
+      }
+    },
     recycle: '회수',
     transportResources: '자원 수송',
     totalCargoCapacity: '총 적재량',
@@ -566,7 +619,24 @@ export default {
     presetName: '프리셋 이름',
     presetNamePlaceholder: '프리셋 이름 입력',
     deletePresetTitle: '프리셋 삭제',
-    deletePresetMessage: '프리셋 "{name}"을(를) 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.'
+    deletePresetMessage: '프리셋 "{name}"을(를) 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.',
+    // 점프 게이트
+    jumpGate: '점프 게이트',
+    jumpGateDescription: '점프 게이트를 사용하여 다른 점프 게이트가 있는 위성으로 함대를 즉시 전송',
+    jumpGateNotAvailable: '점프 게이트 사용 불가',
+    jumpGateRequiresMoon: '점프 게이트는 위성에서만 사용 가능',
+    jumpGateNotBuilt: '현재 위성에 점프 게이트가 없습니다',
+    jumpGateCooldown: '점프 게이트 쿨다운 중',
+    jumpGateCooldownRemaining: '남은 쿨다운 시간',
+    jumpGateReady: '점프 게이트 준비 완료',
+    jumpGateSelectTarget: '목표 위성 선택',
+    jumpGateNoTargetMoons: '사용 가능한 목표 위성 없음 (점프 게이트와 쿨다운 완료 필요)',
+    jumpGateSelectFleet: '전송할 함대 선택',
+    jumpGateTransfer: '함대 전송',
+    jumpGateSuccess: '점프 게이트 전송 성공',
+    jumpGateSuccessMessage: '함대가 {target}(으)로 즉시 전송되었습니다',
+    jumpGateFailed: '점프 게이트 전송 실패',
+    jumpGateFailedMessage: '점프 게이트 상태와 함대 구성을 확인하세요'
   },
   officersView: {
     title: '장교',
@@ -625,6 +695,8 @@ export default {
     switch: '전환',
     recycle: '회수',
     debrisField: '잔해 필드',
+    oreDeposits: '광맥 매장량',
+    deposits: '매장량',
     scoutPlanetTitle: '행성 정찰',
     attackPlanetTitle: '행성 공격',
     missileAttackTitle: '미사일 공격',
@@ -649,7 +721,9 @@ export default {
     giftPlanetTitle: '선물 보내기',
     giftPlanetMessage:
       '행성 [{coordinates}]에 자원을 선물로 보내시겠습니까?\n\n함대 페이지로 이동하여 수송선을 선택하고 자원을 적재하세요.',
-    npcPlanetName: '{name}의 행성'
+    npcPlanetName: '{name}의 행성',
+    intercepted: '요격됨',
+    defenseLosses: '방어 손실'
   },
   messagesView: {
     title: '메시지 센터',
@@ -673,6 +747,8 @@ export default {
     attackerLosses: '공격자 손실',
     defenderLosses: '방어자 손실',
     noLosses: '손실 없음',
+    losses: '손실',
+    remainingUnits: '잔여 유닛',
     plunder: '약탈 자원',
     debrisField: '잔해장',
     resources: '자원',
@@ -690,6 +766,18 @@ export default {
     round: '제{round}라운드',
     attackerRemainingPower: '공격자 잔여 화력',
     defenderRemainingPower: '방어자 잔여 화력',
+    // 전투 애니메이션
+    playAnimation: '애니메이션 재생',
+    showDetails: '세부정보 표시',
+    speed: '속도',
+    power: '전투력',
+    battleLogEmpty: '전투 기록이 비어 있습니다',
+    roundStarted: '제{round}라운드 시작',
+    shipDestroyed: '{ship} {count}대 파괴',
+    defenseDestroyed: '{defense} {count}기 파괴',
+    attackerWins: '공격자 승리',
+    defenderWins: '방어자 승리',
+    roundsPlayed: '라운드 완료',
     spied: '정찰당함',
     spiedNotification: '정찰 알림',
     noSpiedNotifications: '정찰 알림 없음',
@@ -898,6 +986,7 @@ export default {
     inAppNotifications: '인앱 알림',
     constructionComplete: '건설 완료',
     researchComplete: '연구 완료',
+    unlockNotification: '잠금 해제 알림',
     browserPermission: '브라우저 알림 활성화',
     permissionGranted: '권한 허용됨',
     permissionDenied: '권한 거부됨/허용되지 않음',
@@ -905,11 +994,22 @@ export default {
     notificationsDisabled: '특정 알림을 설정하려면 위의 스위치 중 하나를 활성화하세요',
     suppressInFocus: '페이지가 포커스될 때 브라우저 알림 숨기기',
     expandTypes: '세부 정보 펼치기',
-    collapseTypes: '세부 정보 접기'
+    collapseTypes: '세부 정보 접기',
+    // NPC 이름 업데이트
+    npcNameUpdate: 'NPC 이름 업데이트',
+    npcNameUpdateTitle: '이전 형식 NPC 이름 감지됨',
+    npcNameUpdateMessage: '{count}개의 NPC가 이전 형식의 이름을 사용 중입니다. 새로운 현지화된 이름으로 업데이트하시겠습니까?',
+    npcNameUpdateConfirm: '이름 업데이트',
+    npcNameUpdateCancel: '현재 유지',
+    npcNameUpdateSuccess: '{count}개의 NPC 이름이 업데이트되었습니다',
+    npcNameUpdateSkipped: 'NPC 이름 업데이트 건너뜀'
   },
   notifications: {
     constructionComplete: '건설 완료',
-    researchComplete: '연구 완료'
+    researchComplete: '연구 완료',
+    newUnlock: '새 콘텐츠 잠금 해제',
+    building: '건물',
+    technology: '기술'
   },
   gmView: {
     title: 'GM 제어판',
@@ -1145,6 +1245,21 @@ export default {
         attackCooldown: '공격 쿨다운 중 ({min}분 {sec}초)',
         notSpiedYet: '아직 정찰하지 않음, 먼저 정찰 필요'
       }
+    },
+    aiType: 'AI 유형',
+    aiTypes: {
+      aggressive: '공격형',
+      defensive: '방어형',
+      trader: '상인형',
+      expansionist: '확장형',
+      balanced: '균형형'
+    },
+    aiTypeDescriptions: {
+      aggressive: '적극적으로 정찰 및 공격, 강한 보복',
+      defensive: '거의 공격하지 않음, 공격받으면 강하게 보복',
+      trader: '거의 공격하지 않음, 거래와 선물 선호',
+      expansionist: '발전에 집중, 공격성 낮음',
+      balanced: '상황에 따라 전략을 동적으로 조정'
     }
   },
   pagination: {
@@ -1296,7 +1411,8 @@ export default {
     },
     achievements: {
       title: '업적 시스템',
-      message: '게임 목표를 완료하여 업적을 해제하고 암흑 물질 보상을 획득하세요! 업적은 여러 등급이 있으며, 더 높은 도전으로 더 좋은 보상을 받으세요.'
+      message:
+        '게임 목표를 완료하여 업적을 해제하고 암흑 물질 보상을 획득하세요! 업적은 여러 등급이 있으며, 더 높은 도전으로 더 좋은 보상을 받으세요.'
     },
     settings: {
       title: '설정',
@@ -1403,5 +1519,24 @@ export default {
       robbed: 'NPC에게 잔해 회수당한 횟수',
       lostToNPC: 'NPC에게 빼앗긴 잔해 자원 총량'
     }
+  },
+  ranking: {
+    title: '랭킹',
+    totalPlayers: '{count} 플레이어',
+    yourRanking: '내 순위',
+    categories: {
+      total: '종합',
+      building: '건물',
+      research: '연구',
+      fleet: '함대',
+      defense: '방어'
+    },
+    points: '점',
+    name: '이름',
+    planets: '행성',
+    details: '상세',
+    you: '나',
+    scoreBreakdown: '점수 상세',
+    noData: '랭킹 데이터 없음'
   }
 }

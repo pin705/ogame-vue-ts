@@ -17,7 +17,7 @@ export default defineConfig(async () => {
       manifest: {
         name: pkg.name,
         short_name: pkg.title,
-        description: '征服星辰大海',
+        description: 'Conquer the stars',
         theme_color: '#000000',
         background_color: '#000000',
         display: 'fullscreen',

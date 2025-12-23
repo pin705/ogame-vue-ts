@@ -45,10 +45,13 @@ export default {
     requirementsNotMet: 'Требования не выполнены',
     current: 'Текущий',
     level: 'Уровень',
+    to: 'до',
     gmModeActivated: 'Режим GM активирован! Проверьте навигационное меню.',
     view: 'Просмотр',
+    viewDetails: 'Подробнее',
     exitConfirmTitle: 'Выйти из игры',
-    exitConfirmMessage: 'Вы уверены, что хотите выйти? Прогресс сохраняется автоматически.'
+    exitConfirmMessage: 'Вы уверены, что хотите выйти? Прогресс сохраняется автоматически.',
+    points: 'Очки'
   },
   errors: {
     requirementsNotMet: 'Требования не выполнены',
@@ -85,6 +88,7 @@ export default {
     galaxy: 'Галактика',
     diplomacy: 'Дипломатия',
     achievements: 'Достижения',
+    ranking: 'Рейтинг',
     messages: 'Сообщения',
     settings: 'Настройки',
     gm: 'GM'
@@ -110,7 +114,8 @@ export default {
     perHour: 'час',
     perMinute: 'мин',
     hour: 'час',
-    noEnergy: 'Нет энергии'
+    noEnergy: 'Нет энергии',
+    temperatureBonus: 'Температурный бонус'
   },
   energy: {
     lowWarning: 'Дефицит энергии! Производство ресурсов остановлено!',
@@ -119,6 +124,12 @@ export default {
     noProduction: 'Дефицит энергии! Производство ресурсов остановлено!',
     deficitDetail: 'Дефицит энергии: {deficit}, постройте больше электростанций',
     buildSolarPlant: 'Построить электростанцию'
+  },
+  oreDeposit: {
+    lowWarning: 'Залежи руды заканчиваются!',
+    depletedWarning: 'Залежи руды истощены!',
+    depletedResources: 'Истощено: {resources}',
+    lowResources: 'Почти истощено: {resources}'
   },
   planet: {
     planet: 'Планета',
@@ -186,12 +197,20 @@ export default {
     researchSpeedBonus: 'Бонус скорости исследования',
     planetSpace: 'Planet Space',
     moonSpace: 'Moon Space',
-    missileCapacity: 'Missile Capacity'
+    missileCapacity: 'Missile Capacity',
+
+    // Ore deposits
+    oreDeposit: 'Рудный запас',
+    remainingDeposit: 'Осталось',
+    depletionTime: 'Расч. истощение',
+    depositDepleted: 'Исчерпано',
+    depositWarning: 'Внимание: Рудные запасы заканчиваются (ниже 10%)!',
+    depositDepletedMessage: 'Рудные запасы исчерпаны. Производство остановлено.'
   },
   buildingDescriptions: {
     metalMine: 'Добывает металлические ресурсы',
     crystalMine: 'Добывает кристаллические ресурсы',
-    deuteriumSynthesizer: 'Синтезирует дейтериевые ресурсы',
+    deuteriumSynthesizer: 'Синтезирует дейтерий (выше выход при низких температурах)',
     solarPlant: 'Обеспечивает энергией',
     fusionReactor: 'Использует дейтерий для производства большого количества энергии',
     roboticsFactory: 'Ускоряет скорость строительства',
@@ -241,7 +260,7 @@ export default {
     colonyShip: 'Используется для колонизации новых планет',
     recycler: 'Собирает ресурсы с поля обломков',
     espionageProbe: 'Разведывает вражеские планеты',
-    solarSatellite: 'Обеспечивает дополнительную энергию, генерирует 50 энергии на спутник',
+    solarSatellite: 'Обеспечивает дополнительную энергию, выход зависит от температуры планеты (выше при жаре)',
     darkMatterHarvester: 'Специальный корабль для сбора тёмной материи',
     deathstar: 'Абсолютное оружие, способное уничтожать целые планеты'
   },
@@ -367,8 +386,16 @@ export default {
       buildings: 'Здания',
       research: 'Исследования',
       ships: 'Корабли',
-      defense: 'Оборона'
-    }
+      defense: 'Оборона',
+      waiting: 'Ожидание'
+    },
+    waitingEmpty: 'Нет ожидающих задач',
+    addToWaiting: 'Добавить в очередь ожидания',
+    remove: 'Удалить',
+    resourcesReady: 'Готово',
+    waitingResources: 'Ожидание',
+    waitingQueueFull: 'Очередь ожидания заполнена',
+    movedToQueue: 'Задача перемещена в очередь'
   },
   overview: {
     title: 'Обзор планеты',
@@ -381,7 +408,10 @@ export default {
     consumptionSourcesDesc: 'Детали потребления энергии зданиями',
     totalProduction: 'Общее производство',
     totalConsumption: 'Общее потребление',
-    noConsumption: 'Нет потребления энергии'
+    noConsumption: 'Нет потребления энергии',
+    tabOverview: 'Обзор',
+    tabProduction: 'Детали производства',
+    tabConsumption: 'Детали потребления'
   },
   buildingsView: {
     title: 'Здания',
@@ -515,6 +545,29 @@ export default {
     spy: 'Разведка',
     deploy: 'Размещение',
     expedition: 'Экспедиция',
+    expeditionZone: 'Зона экспедиции',
+    expeditionZoneDesc: 'Выберите пункт назначения. Разные зоны имеют разные риски и награды',
+    requiresAstro: 'Требуется Астрофизика уровня {level}',
+    reward: 'Награда',
+    danger: 'Опасность',
+    zones: {
+      nearSpace: {
+        name: 'Ближний космос',
+        desc: 'Безопасный ближний космос, низкий риск, но меньше наград'
+      },
+      deepSpace: {
+        name: 'Глубокий космос',
+        desc: 'Далеко от звёзд, можно найти больше ресурсов'
+      },
+      unchartedSpace: {
+        name: 'Неизведанный космос',
+        desc: 'Неисследованная область, высокий риск — высокая награда'
+      },
+      dangerousNebula: {
+        name: 'Опасная туманность',
+        desc: 'Туманность полная неизвестных опасностей, но содержит очень богатые сокровища'
+      }
+    },
     recycle: 'Переработка',
     transportResources: 'Транспортировка ресурсов',
     totalCargoCapacity: 'Общая грузоподъёмность',
@@ -569,7 +622,24 @@ export default {
     presetName: 'Имя шаблона',
     presetNamePlaceholder: 'Введите имя шаблона',
     deletePresetTitle: 'Удалить шаблон',
-    deletePresetMessage: 'Вы уверены, что хотите удалить шаблон "{name}"? Это действие нельзя отменить.'
+    deletePresetMessage: 'Вы уверены, что хотите удалить шаблон "{name}"? Это действие нельзя отменить.',
+    // Прыжковые ворота
+    jumpGate: 'Прыжковые ворота',
+    jumpGateDescription: 'Используйте прыжковые ворота для мгновенной переброски флота на другую луну с вратами',
+    jumpGateNotAvailable: 'Прыжковые ворота недоступны',
+    jumpGateRequiresMoon: 'Прыжковые ворота можно использовать только на лунах',
+    jumpGateNotBuilt: 'На текущей луне нет прыжковых ворот',
+    jumpGateCooldown: 'Прыжковые ворота перезаряжаются',
+    jumpGateCooldownRemaining: 'Оставшееся время перезарядки',
+    jumpGateReady: 'Прыжковые ворота готовы',
+    jumpGateSelectTarget: 'Выберите целевую луну',
+    jumpGateNoTargetMoons: 'Нет доступных целевых лун (требуются ворота и завершённая перезарядка)',
+    jumpGateSelectFleet: 'Выберите флот для переброски',
+    jumpGateTransfer: 'Перебросить флот',
+    jumpGateSuccess: 'Переброска через ворота успешна',
+    jumpGateSuccessMessage: 'Флот мгновенно переброшен к {target}',
+    jumpGateFailed: 'Переброска через ворота не удалась',
+    jumpGateFailedMessage: 'Проверьте состояние ворот и конфигурацию флота'
   },
   officersView: {
     title: 'Офицеры',
@@ -628,6 +698,8 @@ export default {
     switch: 'Переключить',
     recycle: 'Переработка',
     debrisField: 'Поле обломков',
+    oreDeposits: 'Рудные запасы',
+    deposits: 'Запасы',
     scoutPlanetTitle: 'Разведать планету',
     attackPlanetTitle: 'Атаковать планету',
     missileAttackTitle: 'Ракетная атака',
@@ -655,7 +727,9 @@ export default {
     giftPlanetTitle: 'Отправить подарок',
     giftPlanetMessage:
       'Вы уверены, что хотите отправить ресурсы в подарок планете [{coordinates}]?\n\nПерейдите на страницу флота, чтобы выбрать транспортные корабли и загрузить ресурсы.',
-    npcPlanetName: 'Планета {name}'
+    npcPlanetName: 'Планета {name}',
+    intercepted: 'Перехвачено',
+    defenseLosses: 'Потери обороны'
   },
   messagesView: {
     title: 'Сообщения',
@@ -679,6 +753,8 @@ export default {
     attackerLosses: 'Потери нападающего',
     defenderLosses: 'Потери защитника',
     noLosses: 'Без потерь',
+    losses: 'Потери',
+    remainingUnits: 'Оставшиеся юниты',
     plunder: 'Добыча',
     debrisField: 'Поле обломков',
     resources: 'Ресурсы',
@@ -696,6 +772,18 @@ export default {
     round: 'Раунд {round}',
     attackerRemainingPower: 'Оставшаяся мощь нападающего',
     defenderRemainingPower: 'Оставшаяся мощь защитника',
+    // Анимация битвы
+    playAnimation: 'Воспроизвести анимацию',
+    showDetails: 'Показать детали',
+    speed: 'Скорость',
+    power: 'Боевая мощь',
+    battleLogEmpty: 'Журнал битвы пуст',
+    roundStarted: 'Раунд {round} начался',
+    shipDestroyed: '{count} {ship} уничтожено',
+    defenseDestroyed: '{count} {defense} уничтожено',
+    attackerWins: 'Победа нападающего',
+    defenderWins: 'Победа защитника',
+    roundsPlayed: 'раундов сыграно',
     spied: 'Шпионаж',
     spiedNotification: 'Уведомление о шпионаже',
     noSpiedNotifications: 'Нет уведомлений о шпионаже',
@@ -775,7 +863,8 @@ export default {
     colonizeSuccess: 'Миссия колонизации успешна, новая планета создана',
     colonizeFailed: 'Миссия колонизации провалена',
     colonizeFailedOccupied: 'Колонизация провалена: Целевая позиция уже занята другой планетой',
-    colonizeFailedMaxColonies: 'Колонизация провалена: Достигнуто максимальное количество колоний. Исследуйте Астрофизику для увеличения лимита.',
+    colonizeFailedMaxColonies:
+      'Колонизация провалена: Достигнуто максимальное количество колоний. Исследуйте Астрофизику для увеличения лимита.',
     spySuccess: 'Миссия шпионажа успешно завершена',
     spyFailed: 'Миссия шпионажа провалена',
     spyFailedTargetNotFound: 'Шпионаж провален: Целевая планета не существует',
@@ -904,6 +993,7 @@ export default {
     inAppNotifications: 'Внутриигровые уведомления',
     constructionComplete: 'Строительство завершено',
     researchComplete: 'Исследование завершено',
+    unlockNotification: 'Уведомление о разблокировке',
     browserPermission: 'Включить уведомления браузера',
     permissionGranted: 'Разрешение получено',
     permissionDenied: 'Разрешение отклонено/не получено',
@@ -911,11 +1001,22 @@ export default {
     notificationsDisabled: 'Включите любой переключатель выше для настройки конкретных уведомлений',
     suppressInFocus: 'Не отправлять уведомления браузера, когда страница в фокусе',
     expandTypes: 'Развернуть детали',
-    collapseTypes: 'Свернуть детали'
+    collapseTypes: 'Свернуть детали',
+    // Обновление имен NPC
+    npcNameUpdate: 'Обновление имен NPC',
+    npcNameUpdateTitle: 'Обнаружены устаревшие имена NPC',
+    npcNameUpdateMessage: 'Найдено {count} NPC с устаревшим форматом имен. Хотите обновить их до новых локализованных имен?',
+    npcNameUpdateConfirm: 'Обновить имена',
+    npcNameUpdateCancel: 'Оставить как есть',
+    npcNameUpdateSuccess: 'Успешно обновлено {count} имен NPC',
+    npcNameUpdateSkipped: 'Обновление имен NPC пропущено'
   },
   notifications: {
     constructionComplete: 'Строительство завершено',
-    researchComplete: 'Исследование завершено'
+    researchComplete: 'Исследование завершено',
+    newUnlock: 'Разблокирован новый контент',
+    building: 'Здание',
+    technology: 'Технология'
   },
   gmView: {
     title: 'Панель управления GM',
@@ -1151,6 +1252,21 @@ export default {
         attackCooldown: 'Атака на перезарядке ({min}м {sec}с)',
         notSpiedYet: 'Ещё не разведан, сначала нужна разведка'
       }
+    },
+    aiType: 'Тип ИИ',
+    aiTypes: {
+      aggressive: 'Агрессивный',
+      defensive: 'Оборонительный',
+      trader: 'Торговец',
+      expansionist: 'Экспансионист',
+      balanced: 'Сбалансированный'
+    },
+    aiTypeDescriptions: {
+      aggressive: 'Активно шпионит и атакует, сильная месть',
+      defensive: 'Редко атакует, сильная месть при нападении',
+      trader: 'Почти не атакует, предпочитает торговлю и подарки',
+      expansionist: 'Фокус на развитии, менее агрессивен',
+      balanced: 'Динамически адаптирует стратегию к ситуации'
     }
   },
   pagination: {
@@ -1310,7 +1426,8 @@ export default {
     },
     achievements: {
       title: 'Система достижений',
-      message: 'Выполняйте игровые цели для разблокировки достижений и получения наград в виде тёмной материи! Достижения имеют несколько уровней - стремитесь к более высоким целям для лучших наград.'
+      message:
+        'Выполняйте игровые цели для разблокировки достижений и получения наград в виде тёмной материи! Достижения имеют несколько уровней - стремитесь к более высоким целям для лучших наград.'
     },
     settings: {
       title: 'Настройки',
@@ -1418,5 +1535,24 @@ export default {
       robbed: 'Раз НПС собрал обломки',
       lostToNPC: 'Всего обломков потеряно НПС'
     }
+  },
+  ranking: {
+    title: 'Рейтинг',
+    totalPlayers: '{count} игроков',
+    yourRanking: 'Ваш рейтинг',
+    categories: {
+      total: 'Всего',
+      building: 'Здания',
+      research: 'Исследования',
+      fleet: 'Флот',
+      defense: 'Оборона'
+    },
+    points: 'очк',
+    name: 'Имя',
+    planets: 'Планеты',
+    details: 'Детали',
+    you: 'Вы',
+    scoreBreakdown: 'Детали очков',
+    noData: 'Нет данных рейтинга'
   }
 }

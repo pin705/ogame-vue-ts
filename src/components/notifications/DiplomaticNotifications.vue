@@ -36,14 +36,14 @@
           >
             <div class="flex items-center gap-3">
               <!-- 左侧：事件图标 -->
-              <div class="flex-shrink-0">
+              <div class="shrink-0">
                 <component :is="getEventIcon(report.eventType)" class="h-5 w-5" :class="getEventIconColor(report.eventType)" />
               </div>
               <!-- 中间：主要信息 -->
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2">
-                  <span class="font-medium text-sm truncate">{{ report.npcName }}</span>
-                  <Badge :variant="getStatusBadgeVariant(report.newStatus)" class="text-xs flex-shrink-0">
+                  <span class="font-medium text-sm truncate">{{ getNpcName(report) }}</span>
+                  <Badge :variant="getStatusBadgeVariant(report.newStatus)" class="text-xs shrink-0">
                     {{ getStatusText(report.newStatus) }}
                   </Badge>
                 </div>
@@ -52,7 +52,7 @@
                 </p>
               </div>
               <!-- 右侧：好感度变化和时间 -->
-              <div class="flex-shrink-0 text-right">
+              <div class="shrink-0 text-right">
                 <span
                   class="text-sm font-bold block"
                   :class="report.reputationChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'"
@@ -64,7 +64,7 @@
                 </span>
               </div>
               <!-- 未读标记 -->
-              <span v-if="!report.read" class="h-2 w-2 rounded-full bg-destructive flex-shrink-0" />
+              <span v-if="!report.read" class="h-2 w-2 rounded-full bg-destructive shrink-0" />
             </div>
           </div>
         </div>
@@ -100,7 +100,7 @@
         <div class="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-semibold text-lg">{{ selectedReport.npcName }}</h3>
+              <h3 class="font-semibold text-lg">{{ getNpcName(selectedReport) }}</h3>
               <Badge :variant="getStatusBadgeVariant(selectedReport.newStatus)">
                 {{ getStatusText(selectedReport.newStatus) }}
               </Badge>
@@ -117,7 +117,7 @@
           <p class="text-sm p-3 bg-muted/30 rounded-md">
             {{
               selectedReport.messageKey && selectedReport.messageParams
-                ? t(selectedReport.messageKey, selectedReport.messageParams)
+                ? t(selectedReport.messageKey, getMessageParams(selectedReport))
                 : selectedReport.message
             }}
           </p>
@@ -195,6 +195,7 @@
   import { ref, computed } from 'vue'
   import { useRouter } from 'vue-router'
   import { useGameStore } from '@/stores/gameStore'
+  import { useNPCStore } from '@/stores/npcStore'
   import { useI18n } from '@/composables/useI18n'
   import { Button } from '@/components/ui/button'
   import { Badge } from '@/components/ui/badge'
@@ -209,6 +210,7 @@
 
   const router = useRouter()
   const gameStore = useGameStore()
+  const npcStore = useNPCStore()
   const { t } = useI18n()
   const isOpen = ref(false)
   const detailDialogOpen = ref(false)
@@ -217,6 +219,42 @@
   const reports = computed(() => {
     return (gameStore.player.diplomaticReports || []).slice().reverse().slice(0, 20) // 最近20条
   })
+
+  /**
+   * 获取NPC当前名称
+   * 优先使用当前NPC的实际名称，如果NPC不存在则尝试从旧名称中提取ID查找
+   */
+  const getNpcName = (report: DiplomaticReport): string => {
+    if (!npcStore.npcs?.length) return report.npcName
+
+    // 1. 先通过 npcId 查找
+    if (report.npcId) {
+      const npc = npcStore.npcs.find(n => n.id === report.npcId)
+      if (npc) return npc.name
+    }
+
+    // 2. 尝试从旧名称中提取ID并查找
+    // 旧格式如 "NPC-npc_182"，新ID格式为 "npc_182"
+    const idMatch = report.npcName.match(/npc_\d+/)
+    if (idMatch) {
+      const extractedId = idMatch[0]
+      const npc = npcStore.npcs.find(n => n.id === extractedId)
+      if (npc) return npc.name
+    }
+
+    return report.npcName
+  }
+
+  /**
+   * 获取报告的消息参数，将 npcName 替换为当前名称
+   */
+  const getMessageParams = (report: DiplomaticReport): Record<string, string | number> => {
+    if (!report.messageParams) return {}
+    return {
+      ...report.messageParams,
+      npcName: getNpcName(report)
+    }
+  }
 
   const unreadCount = computed(() => {
     return (gameStore.player.diplomaticReports || []).filter(r => !r.read).length

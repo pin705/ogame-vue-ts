@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
   appId: 'games.wenzi.ogame',
-  appName: 'OGame',
+  appName: 'OGame Vue Ts',
   webDir: 'docs',
   server: {
     androidScheme: 'https'

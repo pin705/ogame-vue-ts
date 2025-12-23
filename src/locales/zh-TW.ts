@@ -45,10 +45,13 @@ export default {
     requirementsNotMet: '前置條件未滿足',
     current: '當前',
     level: '等級',
+    to: '至',
     gmModeActivated: 'GM 模式已啟用！請查看導航選單。',
     view: '查看',
+    viewDetails: '查看詳情',
     exitConfirmTitle: '退出遊戲',
-    exitConfirmMessage: '確定要退出遊戲嗎？遊戲進度會自動儲存。'
+    exitConfirmMessage: '確定要退出遊戲嗎？遊戲進度會自動儲存。',
+    points: '積分'
   },
   errors: {
     requirementsNotMet: '不滿足前置條件',
@@ -85,6 +88,7 @@ export default {
     galaxy: '星系',
     diplomacy: '外交',
     achievements: '成就',
+    ranking: '排行',
     messages: '訊息',
     settings: '設定',
     guide: '遊戲指南',
@@ -111,7 +115,8 @@ export default {
     perHour: '小時',
     perMinute: '分鐘',
     hour: '小時',
-    noEnergy: '電力不足'
+    noEnergy: '電力不足',
+    temperatureBonus: '溫度加成'
   },
   energy: {
     lowWarning: '電力不足，資源生產已停止！',
@@ -120,6 +125,12 @@ export default {
     noProduction: '電力不足，資源生產已停止！',
     deficitDetail: '電力缺口: {deficit}，請建造更多電站',
     buildSolarPlant: '建造電站'
+  },
+  oreDeposit: {
+    lowWarning: '礦脈儲量不足！',
+    depletedWarning: '礦脈已耗盡！',
+    depletedResources: '已耗盡: {resources}',
+    lowResources: '即將耗盡: {resources}'
   },
   planet: {
     planet: '星球',
@@ -187,12 +198,20 @@ export default {
     researchSpeedBonus: '研究速度加成',
     planetSpace: '行星空間',
     moonSpace: '月球空間',
-    missileCapacity: '導彈容量'
+    missileCapacity: '導彈容量',
+
+    // 礦脈儲量
+    oreDeposit: '礦脈儲量',
+    remainingDeposit: '剩餘儲量',
+    depletionTime: '預計耗盡',
+    depositDepleted: '已耗盡',
+    depositWarning: '警告：礦脈儲量即將耗盡（低於10%）！',
+    depositDepletedMessage: '礦脈已耗盡，產量已停止。'
   },
   buildingDescriptions: {
     metalMine: '開採金屬資源',
     crystalMine: '開採晶體資源',
-    deuteriumSynthesizer: '合成重氫資源',
+    deuteriumSynthesizer: '合成重氫資源（溫度越低產量越高）',
     solarPlant: '提供能源',
     fusionReactor: '使用重氫產生大量能源',
     roboticsFactory: '加快建造速度',
@@ -242,7 +261,7 @@ export default {
     colonyShip: '用於殖民新星球',
     recycler: '收集殘骸場資源',
     espionageProbe: '偵察敵方星球',
-    solarSatellite: '提供額外能源，每個產生50點電力',
+    solarSatellite: '提供額外能源，產能受星球溫度影響（溫度越高產能越高）',
     darkMatterHarvester: '專門用於採集暗物質的特殊飛船',
     deathstar: '終極武器，能夠摧毀整個行星'
   },
@@ -369,8 +388,16 @@ export default {
       buildings: '建築',
       research: '研究',
       ships: '艦船',
-      defense: '防禦'
-    }
+      defense: '防禦',
+      waiting: '等待'
+    },
+    waitingEmpty: '目前沒有等待中的任務',
+    addToWaiting: '加入等待佇列',
+    remove: '移除',
+    resourcesReady: '資源就緒',
+    waitingResources: '等待資源',
+    waitingQueueFull: '等待佇列已滿',
+    movedToQueue: '任務已移至正式佇列'
   },
   overview: {
     title: '星球總覽',
@@ -383,7 +410,10 @@ export default {
     consumptionSourcesDesc: '各建築的電力消耗詳情',
     totalProduction: '總產量',
     totalConsumption: '總消耗',
-    noConsumption: '當前無電力消耗'
+    noConsumption: '當前無電力消耗',
+    tabOverview: '概覽',
+    tabProduction: '產量詳情',
+    tabConsumption: '消耗詳情'
   },
   buildingsView: {
     title: '建築',
@@ -515,6 +545,29 @@ export default {
     spy: '偵察',
     deploy: '部署',
     expedition: '探險',
+    expeditionZone: '探險區域',
+    expeditionZoneDesc: '選擇探險目的地，不同區域有不同的風險和收益',
+    requiresAstro: '需要天體物理學 {level} 級',
+    reward: '收益',
+    danger: '危險',
+    zones: {
+      nearSpace: {
+        name: '近空區域',
+        desc: '安全的近地空間，風險低但收益也較少'
+      },
+      deepSpace: {
+        name: '深空區域',
+        desc: '遠離恆星的深空，可能發現更多資源'
+      },
+      unchartedSpace: {
+        name: '未知空間',
+        desc: '未經探索的區域，高風險高回報'
+      },
+      dangerousNebula: {
+        name: '危險星雲',
+        desc: '充滿未知危險的星雲，但蘊含極其豐富的寶藏'
+      }
+    },
     recycle: '回收',
     transportResources: '運輸資源',
     totalCargoCapacity: '總載貨量',
@@ -569,7 +622,24 @@ export default {
     presetName: '預設名稱',
     presetNamePlaceholder: '輸入預設名稱',
     deletePresetTitle: '刪除預設',
-    deletePresetMessage: '確定要刪除預設「{name}」嗎？此操作不可撤銷。'
+    deletePresetMessage: '確定要刪除預設「{name}」嗎？此操作不可撤銷。',
+    // 跳躍門
+    jumpGate: '跳躍門',
+    jumpGateDescription: '使用跳躍門瞬間傳送艦隊到其他有跳躍門的月球',
+    jumpGateNotAvailable: '跳躍門不可用',
+    jumpGateRequiresMoon: '跳躍門只能在月球上使用',
+    jumpGateNotBuilt: '當前月球沒有建造跳躍門',
+    jumpGateCooldown: '跳躍門冷卻中',
+    jumpGateCooldownRemaining: '剩餘冷卻時間',
+    jumpGateReady: '跳躍門就緒',
+    jumpGateSelectTarget: '選擇目標月球',
+    jumpGateNoTargetMoons: '沒有可用的目標月球（需要有跳躍門且冷卻完成）',
+    jumpGateSelectFleet: '選擇傳送艦隊',
+    jumpGateTransfer: '傳送艦隊',
+    jumpGateSuccess: '跳躍門傳送成功',
+    jumpGateSuccessMessage: '艦隊已瞬間傳送到 {target}',
+    jumpGateFailed: '跳躍門傳送失敗',
+    jumpGateFailedMessage: '請檢查跳躍門狀態和艦隊配置'
   },
   officersView: {
     title: '軍官',
@@ -628,6 +698,8 @@ export default {
     switch: '切換',
     recycle: '回收',
     debrisField: '殘骸場',
+    oreDeposits: '礦脈儲量',
+    deposits: '儲量',
     scoutPlanetTitle: '偵察星球',
     attackPlanetTitle: '攻擊星球',
     missileAttackTitle: '導彈攻擊',
@@ -650,7 +722,9 @@ export default {
     debris: '殘骸',
     giftPlanetTitle: '贈送禮物',
     giftPlanetMessage: '確定要向星球 [{coordinates}] 贈送資源嗎？\n\n請前往艦隊頁面選擇運輸船並裝載資源。',
-    npcPlanetName: '{name}的星球'
+    npcPlanetName: '{name}的星球',
+    intercepted: '被攔截',
+    defenseLosses: '防禦損失'
   },
   messagesView: {
     title: '訊息中心',
@@ -674,6 +748,8 @@ export default {
     attackerLosses: '攻擊方損失',
     defenderLosses: '防守方損失',
     noLosses: '無損失',
+    losses: '損失統計',
+    remainingUnits: '剩餘單位',
     plunder: '掠奪資源',
     debrisField: '殘骸場',
     resources: '資源',
@@ -691,6 +767,18 @@ export default {
     round: '第{round}回合',
     attackerRemainingPower: '攻擊方剩餘火力',
     defenderRemainingPower: '防守方剩餘火力',
+    // 戰鬥動畫相關
+    playAnimation: '播放動畫',
+    showDetails: '顯示詳情',
+    speed: '速度',
+    power: '戰鬥力',
+    battleLogEmpty: '戰鬥日誌為空',
+    roundStarted: '第{round}回合開始',
+    shipDestroyed: '{count}艘{ship}被摧毀',
+    defenseDestroyed: '{count}座{defense}被摧毀',
+    attackerWins: '攻擊方獲勝',
+    defenderWins: '防守方獲勝',
+    roundsPlayed: '回合已播放',
     spied: '被偵查',
     spiedNotification: '被偵查通知',
     noSpiedNotifications: '暫無被偵查通知',
@@ -899,6 +987,7 @@ export default {
     inAppNotifications: '頁面內通知',
     constructionComplete: '建築完成',
     researchComplete: '研究完成',
+    unlockNotification: '解鎖通知',
     browserPermission: '啟用瀏覽器通知',
     permissionGranted: '已獲得權限',
     permissionDenied: '權限被拒絕/未獲得',
@@ -906,11 +995,22 @@ export default {
     notificationsDisabled: '啟用上方任一開關以配置具體通知',
     suppressInFocus: '頁面聚焦時不發送瀏覽器通知',
     expandTypes: '展開詳細設定',
-    collapseTypes: '收起詳細設定'
+    collapseTypes: '收起詳細設定',
+    // NPC名稱更新
+    npcNameUpdate: 'NPC名稱更新',
+    npcNameUpdateTitle: '檢測到舊版NPC名稱',
+    npcNameUpdateMessage: '發現 {count} 個NPC使用舊版名稱格式。是否更新為新的本地化名稱？',
+    npcNameUpdateConfirm: '更新名稱',
+    npcNameUpdateCancel: '保持原樣',
+    npcNameUpdateSuccess: '已成功更新 {count} 個NPC名稱',
+    npcNameUpdateSkipped: '已跳過NPC名稱更新'
   },
   notifications: {
     constructionComplete: '建造完成',
-    researchComplete: '研究完成'
+    researchComplete: '研究完成',
+    newUnlock: '新內容解鎖',
+    building: '建築',
+    technology: '科技'
   },
   gmView: {
     title: 'GM 管理面板',
@@ -1146,6 +1246,21 @@ export default {
         attackCooldown: '攻擊冷卻中（{min}分{sec}秒）',
         notSpiedYet: '尚未偵查過，需要先進行偵查'
       }
+    },
+    aiType: 'AI類型',
+    aiTypes: {
+      aggressive: '侵略型',
+      defensive: '防守型',
+      trader: '商人型',
+      expansionist: '擴張型',
+      balanced: '平衡型'
+    },
+    aiTypeDescriptions: {
+      aggressive: '積極偵查和攻擊，反擊猛烈',
+      defensive: '很少主動攻擊，被攻擊後強烈反擊',
+      trader: '幾乎不攻擊，更願意交易和送禮',
+      expansionist: '專注發展，較少攻擊',
+      balanced: '根據情況動態調整策略'
     }
   },
   pagination: {
@@ -1536,5 +1651,24 @@ export default {
         item4: '地質學家 - 增加資源產量'
       }
     }
+  },
+  ranking: {
+    title: '排行榜',
+    totalPlayers: '共 {count} 名玩家',
+    yourRanking: '你的排名',
+    categories: {
+      total: '總積分',
+      building: '建築',
+      research: '研究',
+      fleet: '艦隊',
+      defense: '防禦'
+    },
+    points: '分',
+    name: '名稱',
+    planets: '星球',
+    details: '詳情',
+    you: '你',
+    scoreBreakdown: '積分詳情',
+    noData: '暫無排行數據'
   }
 }

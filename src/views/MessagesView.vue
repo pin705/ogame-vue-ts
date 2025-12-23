@@ -62,14 +62,14 @@
           <CardHeader class="pb-3">
             <div class="flex justify-between items-center gap-2">
               <div class="flex items-center gap-2 min-w-0 flex-1">
-                <Sword class="h-4 w-4 flex-shrink-0" />
+                <Sword class="h-4 w-4 shrink-0" />
                 <CardTitle class="text-base sm:text-lg">{{ t('messagesView.battleReport') }}</CardTitle>
                 <Badge v-if="!report.read" variant="default" class="text-xs">{{ t('messagesView.unread') }}</Badge>
                 <Badge :variant="getBattleResultVariant(report)" class="text-xs">
                   {{ getBattleResultText(report) }}
                 </Badge>
               </div>
-              <Button @click.stop="deleteBattleReport(report.id)" variant="ghost" size="icon" class="h-8 w-8 flex-shrink-0">
+              <Button @click.stop="deleteBattleReport(report.id)" variant="ghost" size="icon" class="h-8 w-8 shrink-0">
                 <X class="h-4 w-4" />
               </Button>
             </div>
@@ -99,12 +99,12 @@
           <CardHeader class="pb-3">
             <div class="flex justify-between items-center gap-2">
               <div class="flex items-center gap-2 min-w-0 flex-1">
-                <Eye class="h-4 w-4 flex-shrink-0" />
+                <Eye class="h-4 w-4 shrink-0" />
                 <CardTitle class="text-base sm:text-lg">{{ t('messagesView.spyReport') }}</CardTitle>
                 <Badge v-if="!report.read" variant="default" class="text-xs">{{ t('messagesView.unread') }}</Badge>
-                <Badge variant="outline" class="text-xs">{{ report.targetPlanetId }}</Badge>
+                <Badge variant="outline" class="text-xs">{{ getSpyReportTargetName(report) }}</Badge>
               </div>
-              <Button @click.stop="deleteSpyReport(report.id)" variant="ghost" size="icon" class="h-8 w-8 flex-shrink-0">
+              <Button @click.stop="deleteSpyReport(report.id)" variant="ghost" size="icon" class="h-8 w-8 shrink-0">
                 <X class="h-4 w-4" />
               </Button>
             </div>
@@ -124,19 +124,20 @@
           <CardHeader class="pb-3">
             <div class="flex justify-between items-center gap-2">
               <div class="flex items-center gap-2 min-w-0 flex-1">
-                <AlertTriangle class="h-4 w-4 flex-shrink-0 text-destructive" />
+                <AlertTriangle class="h-4 w-4 shrink-0 text-destructive" />
                 <CardTitle class="text-base sm:text-lg">{{ t('messagesView.spiedNotification') }}</CardTitle>
                 <Badge v-if="!notification.read" variant="default" class="text-xs">{{ t('messagesView.unread') }}</Badge>
                 <Badge :variant="notification.detectionSuccess ? 'destructive' : 'secondary'" class="text-xs">
                   {{ notification.detectionSuccess ? t('messagesView.detected') : t('messagesView.undetected') }}
                 </Badge>
               </div>
-              <Button @click.stop="deleteSpiedNotification(notification.id)" variant="ghost" size="icon" class="h-8 w-8 flex-shrink-0">
+              <Button @click.stop="deleteSpiedNotification(notification.id)" variant="ghost" size="icon" class="h-8 w-8 shrink-0">
                 <X class="h-4 w-4" />
               </Button>
             </div>
             <CardDescription class="text-xs sm:text-sm">
-              {{ notification.npcName }} → {{ notification.targetPlanetName }} · {{ formatDate(notification.timestamp) }}
+              {{ getNpcName(notification.npcId, notification.npcName) }} → {{ notification.targetPlanetName }} ·
+              {{ formatDate(notification.timestamp) }}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -168,21 +169,16 @@
           <CardHeader class="pb-3">
             <div class="flex justify-between items-center gap-2">
               <div class="flex items-center gap-2 min-w-0 flex-1">
-                <Recycle class="h-4 w-4 flex-shrink-0 text-blue-500" />
+                <Recycle class="h-4 w-4 shrink-0 text-blue-500" />
                 <CardTitle class="text-base sm:text-lg">{{ t('messagesView.npcRecycleActivity') }}</CardTitle>
                 <Badge v-if="!notification.read" variant="default" class="text-xs">{{ t('messagesView.unread') }}</Badge>
               </div>
-              <Button
-                @click.stop="deleteNPCActivityNotification(notification.id)"
-                variant="ghost"
-                size="icon"
-                class="h-8 w-8 flex-shrink-0"
-              >
+              <Button @click.stop="deleteNPCActivityNotification(notification.id)" variant="ghost" size="icon" class="h-8 w-8 shrink-0">
                 <X class="h-4 w-4" />
               </Button>
             </div>
             <CardDescription class="text-xs sm:text-sm">
-              {{ notification.npcName }} →
+              {{ getNpcName(notification.npcId, notification.npcName) }} →
               {{
                 notification.targetPlanetName ||
                 `[${notification.targetPosition.galaxy}:${notification.targetPosition.system}:${notification.targetPosition.position}]`
@@ -202,11 +198,13 @@
           <CardHeader class="pb-3">
             <div class="flex justify-between items-center gap-2">
               <div class="flex items-center gap-2 min-w-0 flex-1">
-                <Gift class="h-4 w-4 flex-shrink-0 text-green-600" />
-                <CardTitle class="text-base sm:text-lg">{{ t('messagesView.giftFrom').replace('{npcName}', gift.fromNpcName) }}</CardTitle>
+                <Gift class="h-4 w-4 shrink-0 text-green-600" />
+                <CardTitle class="text-base sm:text-lg">
+                  {{ t('messagesView.giftFrom').replace('{npcName}', getNpcName(gift.fromNpcId, gift.fromNpcName)) }}
+                </CardTitle>
                 <Badge v-if="!gift.read" variant="default" class="text-xs">{{ t('messagesView.unread') }}</Badge>
               </div>
-              <Button @click.stop="deleteGiftNotification(gift.id)" variant="ghost" size="icon" class="h-8 w-8 flex-shrink-0">
+              <Button @click.stop="deleteGiftNotification(gift.id)" variant="ghost" size="icon" class="h-8 w-8 shrink-0">
                 <X class="h-4 w-4" />
               </Button>
             </div>
@@ -252,13 +250,13 @@
           <CardHeader class="pb-3">
             <div class="flex justify-between items-center gap-2">
               <div class="flex items-center gap-2 min-w-0 flex-1">
-                <Ban class="h-4 w-4 flex-shrink-0 text-red-600" />
+                <Ban class="h-4 w-4 shrink-0 text-red-600" />
                 <CardTitle class="text-base sm:text-lg">
-                  {{ t('messagesView.giftRejectedBy').replace('{npcName}', rejection.npcName) }}
+                  {{ t('messagesView.giftRejectedBy').replace('{npcName}', getNpcName(rejection.npcId, rejection.npcName)) }}
                 </CardTitle>
                 <Badge v-if="!rejection.read" variant="default" class="text-xs">{{ t('messagesView.unread') }}</Badge>
               </div>
-              <Button @click.stop="deleteGiftRejectedNotification(rejection.id)" variant="ghost" size="icon" class="h-8 w-8 flex-shrink-0">
+              <Button @click.stop="deleteGiftRejectedNotification(rejection.id)" variant="ghost" size="icon" class="h-8 w-8 shrink-0">
                 <X class="h-4 w-4" />
               </Button>
             </div>
@@ -306,14 +304,14 @@
           <CardHeader class="pb-3">
             <div class="flex justify-between items-center gap-2">
               <div class="flex items-center gap-2 min-w-0 flex-1">
-                <Package class="h-4 w-4 flex-shrink-0" />
+                <Package class="h-4 w-4 shrink-0" />
                 <CardTitle class="text-base sm:text-lg">{{ getMissionTypeName(report.missionType) }}</CardTitle>
                 <Badge v-if="!report.read" variant="default" class="text-xs">{{ t('messagesView.unread') }}</Badge>
                 <Badge :variant="report.success ? 'default' : 'destructive'" class="text-xs">
                   {{ report.success ? t('messagesView.success') : t('messagesView.failed') }}
                 </Badge>
               </div>
-              <Button @click.stop="deleteMissionReport(report.id)" variant="ghost" size="icon" class="h-8 w-8 flex-shrink-0">
+              <Button @click.stop="deleteMissionReport(report.id)" variant="ghost" size="icon" class="h-8 w-8 shrink-0">
                 <X class="h-4 w-4" />
               </Button>
             </div>
@@ -339,322 +337,14 @@
     <!-- 间谍报告对话框 -->
     <SpyReportDialog v-model:open="showSpyDialog" :report="selectedSpyReport" />
 
-    <!-- 被侦查通知详情对话框 -->
-    <Dialog :open="showSpiedDialog" @update:open="showSpiedDialog = $event">
-      <DialogContent class="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle class="flex items-center gap-2">
-            <Eye class="h-5 w-5 text-purple-500" />
-            {{ t('messagesView.spiedNotificationDetails') }}
-          </DialogTitle>
-          <DialogDescription>
-            {{ t('messagesView.spyDetected') }}
-          </DialogDescription>
-        </DialogHeader>
+    <!-- 被侦查通知对话框 -->
+    <SpiedNotificationDialog v-model:open="showSpiedDialog" :notification="selectedSpiedNotification" />
 
-        <div v-if="selectedSpiedNotification" class="space-y-4">
-          <!-- 侦查者信息 -->
-          <div class="p-4 bg-muted/50 rounded-lg">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-semibold text-lg">{{ selectedSpiedNotification.npcName }}</h3>
-              <Badge variant="destructive">{{ t('messagesView.spyDetected') }}</Badge>
-            </div>
-            <p class="text-sm text-muted-foreground">
-              {{ formatDate(selectedSpiedNotification.timestamp) }}
-            </p>
-          </div>
+    <!-- 任务报告对话框 -->
+    <MissionReportDialog v-model:open="showMissionDialog" :report="selectedMissionReport" />
 
-          <!-- 被侦查星球 -->
-          <div class="space-y-2">
-            <h4 class="font-semibold text-sm">{{ t('messagesView.targetPlanet') }}</h4>
-            <div class="p-3 bg-muted/30 rounded-md flex items-center gap-2">
-              <Globe class="h-4 w-4 text-blue-500" />
-              <span class="font-medium">{{ selectedSpiedNotification.targetPlanetName }}</span>
-            </div>
-          </div>
-
-          <!-- 检测结果 -->
-          <div class="space-y-2">
-            <h4 class="font-semibold text-sm">{{ t('messagesView.detectionResult') }}</h4>
-            <div class="p-3 bg-muted/30 rounded-md">
-              <div v-if="selectedSpiedNotification.detectionSuccess" class="flex items-center gap-2 text-yellow-600 dark:text-yellow-400">
-                <AlertTriangle class="h-5 w-5" />
-                <span class="font-medium">{{ t('messagesView.detectionSuccess') }}</span>
-              </div>
-              <p class="text-sm mt-2">
-                {{
-                  t('messagesView.spiedNotificationMessage', {
-                    npc: selectedSpiedNotification.npcName,
-                    planet: selectedSpiedNotification.targetPlanetName
-                  })
-                }}
-              </p>
-            </div>
-          </div>
-
-          <!-- 建议 -->
-          <div class="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-md border border-blue-200 dark:border-blue-800">
-            <p class="text-sm text-blue-800 dark:text-blue-200">
-              {{ t('messagesView.spiedNotificationTip') }}
-            </p>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" @click="showSpiedDialog = false">{{ t('common.close') }}</Button>
-          <Button @click="viewNPCInGalaxy(selectedSpiedNotification?.npcId)">{{ t('messagesView.viewInGalaxy') }}</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-
-    <!-- 任务报告详情对话框 -->
-    <Dialog :open="showMissionDialog" @update:open="showMissionDialog = $event">
-      <DialogContent class="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle class="flex items-center gap-2">
-            <component :is="getMissionIcon(selectedMissionReport?.missionType)" class="h-5 w-5" />
-            {{ t('messagesView.missionReportDetails') }}
-          </DialogTitle>
-          <DialogDescription>
-            {{ t('messagesView.missionDetails') }}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div v-if="selectedMissionReport" class="space-y-4">
-          <!-- 任务状态 -->
-          <div class="p-4 bg-muted/50 rounded-lg">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-semibold text-lg">{{ getMissionTypeName(selectedMissionReport.missionType) }}</h3>
-              <Badge :variant="selectedMissionReport.success ? 'default' : 'destructive'">
-                {{ selectedMissionReport.success ? t('messagesView.missionSuccess') : t('messagesView.missionFailed') }}
-              </Badge>
-            </div>
-            <p class="text-sm text-muted-foreground">
-              {{ formatDate(selectedMissionReport.timestamp) }}
-            </p>
-          </div>
-
-          <!-- 起点和终点 -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <h4 class="font-semibold text-sm">{{ t('messagesView.origin') }}</h4>
-              <div class="p-3 bg-muted/30 rounded-md">
-                <p class="font-medium">{{ selectedMissionReport.originPlanetName }}</p>
-              </div>
-            </div>
-            <div class="space-y-2">
-              <h4 class="font-semibold text-sm">{{ t('messagesView.destination') }}</h4>
-              <div class="p-3 bg-muted/30 rounded-md">
-                <p class="font-medium" v-if="selectedMissionReport.targetPlanetName">{{ selectedMissionReport.targetPlanetName }}</p>
-                <p class="text-sm text-muted-foreground" v-else>
-                  [{{ selectedMissionReport.targetPosition.galaxy }}:{{ selectedMissionReport.targetPosition.system }}:{{
-                    selectedMissionReport.targetPosition.position
-                  }}]
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 任务详情 -->
-          <div class="space-y-2">
-            <h4 class="font-semibold text-sm">{{ t('messagesView.missionDetails') }}</h4>
-            <div class="p-3 bg-muted/30 rounded-md">
-              <p class="text-sm mb-2">{{ selectedMissionReport.message }}</p>
-
-              <!-- 运输任务详情 -->
-              <div v-if="selectedMissionReport.details?.transportedResources" class="mt-3 space-y-1">
-                <p class="text-xs font-semibold text-muted-foreground">{{ t('messagesView.transportedResources') }}:</p>
-                <div class="grid grid-cols-3 gap-2 text-sm">
-                  <div v-for="res in basicResourceFields" :key="res.key">
-                    {{ t(`resources.${res.key}`) }}: {{ selectedMissionReport.details.transportedResources[res.key].toLocaleString() }}
-                  </div>
-                </div>
-              </div>
-
-              <!-- 回收任务详情 -->
-              <div v-if="selectedMissionReport.details?.recycledResources" class="mt-3 space-y-1">
-                <p class="text-xs font-semibold text-muted-foreground">{{ t('messagesView.recycledResources') }}:</p>
-                <div class="grid grid-cols-2 gap-2 text-sm">
-                  <div v-for="res in debrisResourceFields" :key="res.key">
-                    {{ t(`resources.${res.key}`) }}: {{ selectedMissionReport.details.recycledResources[res.key].toLocaleString() }}
-                  </div>
-                </div>
-                <div v-if="selectedMissionReport.details.remainingDebris" class="mt-2">
-                  <p class="text-xs font-semibold text-muted-foreground">{{ t('messagesView.remainingDebris') }}:</p>
-                  <div class="grid grid-cols-2 gap-2 text-sm text-yellow-600 dark:text-yellow-400">
-                    <div v-for="res in debrisResourceFields" :key="res.key">
-                      {{ t(`resources.${res.key}`) }}: {{ selectedMissionReport.details.remainingDebris[res.key].toLocaleString() }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 殖民任务详情 -->
-              <div v-if="selectedMissionReport.details?.newPlanetName" class="mt-3">
-                <p class="text-xs font-semibold text-muted-foreground">{{ t('messagesView.newPlanet') }}:</p>
-                <div class="flex items-center gap-2 mt-1">
-                  <Globe class="h-4 w-4 text-green-500" />
-                  <span class="font-medium">{{ selectedMissionReport.details.newPlanetName }}</span>
-                </div>
-              </div>
-
-              <!-- 导弹攻击详情 -->
-              <div v-if="selectedMissionReport.details?.missileCount !== undefined" class="mt-3 space-y-2">
-                <p class="text-xs font-semibold text-muted-foreground">{{ t('galaxyView.missileAttack') }}:</p>
-                <div class="grid grid-cols-3 gap-2 text-sm">
-                  <div>
-                    <span class="text-muted-foreground">{{ t('galaxyView.missileCount') }}:</span>
-                    <span class="ml-1 font-medium">{{ selectedMissionReport.details.missileCount }}</span>
-                  </div>
-                  <div>
-                    <span class="text-muted-foreground">{{ t('missionReports.hits') }}:</span>
-                    <span class="ml-1 font-medium text-green-600">{{ selectedMissionReport.details.missileHits }}</span>
-                  </div>
-                  <div>
-                    <span class="text-muted-foreground">{{ t('galaxyView.intercepted') }}:</span>
-                    <span class="ml-1 font-medium text-yellow-600">{{ selectedMissionReport.details.missileIntercepted }}</span>
-                  </div>
-                </div>
-                <div v-if="Object.keys(selectedMissionReport.details.defenseLosses || {}).length > 0" class="mt-2">
-                  <p class="text-xs font-semibold text-muted-foreground">{{ t('galaxyView.defenseLosses') }}:</p>
-                  <div class="grid grid-cols-2 gap-1 text-xs mt-1 p-2 bg-red-50 dark:bg-red-950/30 rounded">
-                    <div v-for="(count, defenseType) in selectedMissionReport.details.defenseLosses" :key="defenseType">
-                      <span class="text-muted-foreground">{{ t('defenses.' + defenseType) }}:</span>
-                      <span class="ml-1 font-medium text-red-600 dark:text-red-400">-{{ count }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 探险任务详情 - 发现资源 -->
-              <div v-if="selectedMissionReport.details?.foundResources" class="mt-3 space-y-1">
-                <p class="text-xs font-semibold text-muted-foreground">{{ t('messagesView.resources') }}:</p>
-                <div class="grid grid-cols-2 gap-2 text-sm p-2 bg-green-50 dark:bg-green-950/30 rounded">
-                  <div v-for="res in allResourceFields" :key="res.key">
-                    <template v-if="(selectedMissionReport.details?.foundResources?.[res.key] ?? 0) > 0">
-                      <span class="text-muted-foreground">{{ t(`resources.${res.key}`) }}:</span>
-                      <span class="ml-1 font-medium text-green-600 dark:text-green-400">
-                        +{{ (selectedMissionReport.details?.foundResources?.[res.key] ?? 0).toLocaleString() }}
-                      </span>
-                    </template>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 探险任务详情 - 发现舰船 -->
-              <div v-if="selectedMissionReport.details?.foundFleet" class="mt-3 space-y-1">
-                <p class="text-xs font-semibold text-muted-foreground">{{ t('messagesView.fleet') }}:</p>
-                <div class="grid grid-cols-2 gap-2 text-sm p-2 bg-blue-50 dark:bg-blue-950/30 rounded">
-                  <div v-for="(count, shipType) in selectedMissionReport.details.foundFleet" :key="shipType">
-                    <span class="text-muted-foreground">{{ t('ships.' + shipType) }}:</span>
-                    <span class="ml-1 font-medium text-blue-600 dark:text-blue-400">+{{ count }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 探险任务详情 - 损失舰船 -->
-              <div v-if="selectedMissionReport.details?.fleetLost" class="mt-3 space-y-1">
-                <p class="text-xs font-semibold text-muted-foreground">{{ t('messagesView.attackerLosses') }}:</p>
-                <div class="grid grid-cols-2 gap-2 text-sm p-2 bg-red-50 dark:bg-red-950/30 rounded">
-                  <div v-for="(count, shipType) in selectedMissionReport.details.fleetLost" :key="shipType">
-                    <span class="text-muted-foreground">{{ t('ships.' + shipType) }}:</span>
-                    <span class="ml-1 font-medium text-red-600 dark:text-red-400">-{{ count }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" @click="showMissionDialog = false">{{ t('common.close') }}</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-
-    <!-- NPC活动通知详情对话框 -->
-    <Dialog :open="showNPCActivityDialog" @update:open="showNPCActivityDialog = $event">
-      <DialogContent class="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle class="flex items-center gap-2">
-            <Recycle class="h-5 w-5 text-yellow-500" />
-            {{ t('messagesView.npcActivityDetails') }}
-          </DialogTitle>
-          <DialogDescription>
-            {{ t('messagesView.activityDescription') }}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div v-if="selectedNPCActivityNotification" class="space-y-4">
-          <!-- NPC信息 -->
-          <div class="p-4 bg-muted/50 rounded-lg">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-semibold text-lg">{{ selectedNPCActivityNotification.npcName }}</h3>
-              <Badge variant="secondary">{{ t('messagesView.activityType.' + selectedNPCActivityNotification.activityType) }}</Badge>
-            </div>
-            <p class="text-sm text-muted-foreground">
-              {{ formatDate(selectedNPCActivityNotification.timestamp) }}
-            </p>
-          </div>
-
-          <!-- 活动位置 -->
-          <div class="space-y-2">
-            <h4 class="font-semibold text-sm">{{ t('messagesView.activityLocation') }}</h4>
-            <div class="p-3 bg-muted/30 rounded-md">
-              <div class="flex items-center gap-2 mb-2">
-                <Globe class="h-4 w-4 text-blue-500" />
-                <span class="font-medium">
-                  {{ t('messagesView.position') }}: [{{ selectedNPCActivityNotification.targetPosition.galaxy }}:{{
-                    selectedNPCActivityNotification.targetPosition.system
-                  }}:{{ selectedNPCActivityNotification.targetPosition.position }}]
-                </span>
-              </div>
-              <p v-if="selectedNPCActivityNotification.targetPlanetName" class="text-sm text-muted-foreground">
-                {{ t('messagesView.nearPlanet') }}: {{ selectedNPCActivityNotification.targetPlanetName }}
-              </p>
-            </div>
-          </div>
-
-          <!-- 活动描述 -->
-          <div class="space-y-2">
-            <h4 class="font-semibold text-sm">{{ t('messagesView.activityDescription') }}</h4>
-            <div class="p-3 bg-muted/30 rounded-md">
-              <p class="text-sm">
-                {{
-                  t('messagesView.npcActivityMessage', {
-                    npc: selectedNPCActivityNotification.npcName,
-                    activity: t('messagesView.activityType.' + selectedNPCActivityNotification.activityType),
-                    position: `[${selectedNPCActivityNotification.targetPosition.galaxy}:${selectedNPCActivityNotification.targetPosition.system}:${selectedNPCActivityNotification.targetPosition.position}]`
-                  })
-                }}
-              </p>
-            </div>
-          </div>
-
-          <!-- 到达时间 -->
-          <div class="space-y-2">
-            <h4 class="font-semibold text-sm">{{ t('messagesView.arrivalTime') }}</h4>
-            <div class="p-3 bg-muted/30 rounded-md">
-              <p class="font-medium">{{ formatDate(selectedNPCActivityNotification.arrivalTime) }}</p>
-            </div>
-          </div>
-
-          <!-- 提示信息 -->
-          <div class="p-3 bg-yellow-50 dark:bg-yellow-950/30 rounded-md border border-yellow-200 dark:border-yellow-800">
-            <p class="text-sm text-yellow-800 dark:text-yellow-200">
-              {{ t('messagesView.npcActivityTip') }}
-            </p>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" @click="showNPCActivityDialog = false">{{ t('common.close') }}</Button>
-          <Button @click="viewLocationInGalaxy(selectedNPCActivityNotification?.targetPosition)">
-            {{ t('messagesView.viewInGalaxy') }}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <!-- NPC活动通知对话框 -->
+    <NPCActivityDialog v-model:open="showNPCActivityDialog" :notification="selectedNPCActivityNotification" />
   </div>
 </template>
 
@@ -662,19 +352,20 @@
   import { useGameStore } from '@/stores/gameStore'
   import { useI18n } from '@/composables/useI18n'
   import { computed, ref } from 'vue'
-  import { useRouter } from 'vue-router'
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
   import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
   import { Button } from '@/components/ui/button'
   import { Badge } from '@/components/ui/badge'
-  import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
   import { FixedPagination } from '@/components/ui/pagination'
   import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
   import { Checkbox } from '@/components/ui/checkbox'
-  import BattleReportDialog from '@/components/BattleReportDialog.vue'
-  import SpyReportDialog from '@/components/SpyReportDialog.vue'
+  import BattleReportDialog from '@/components/dialogs/BattleReportDialog.vue'
+  import SpyReportDialog from '@/components/dialogs/SpyReportDialog.vue'
+  import SpiedNotificationDialog from '@/components/dialogs/SpiedNotificationDialog.vue'
+  import MissionReportDialog from '@/components/dialogs/MissionReportDialog.vue'
+  import NPCActivityDialog from '@/components/dialogs/NPCActivityDialog.vue'
   import { formatDate } from '@/utils/format'
-  import { X, Sword, Eye, AlertTriangle, Package, Recycle, Gift, Ban, Check, Users, Skull, Globe, Compass, Trash2 } from 'lucide-vue-next'
+  import { X, Sword, Eye, AlertTriangle, Package, Recycle, Gift, Ban, Check, Users, Trash2 } from 'lucide-vue-next'
   import { Empty, EmptyContent, EmptyDescription } from '@/components/ui/empty'
   import type {
     BattleResult,
@@ -690,7 +381,6 @@
   import * as diplomaticLogic from '@/logic/diplomaticLogic'
   import { toast } from 'vue-sonner'
 
-  const router = useRouter()
   const gameStore = useGameStore()
   const npcStore = useNPCStore()
   const { t } = useI18n()
@@ -739,13 +429,45 @@
   type BasicResourceKey = 'metal' | 'crystal' | 'deuterium'
   const basicResourceFields: { key: BasicResourceKey }[] = [{ key: 'metal' }, { key: 'crystal' }, { key: 'deuterium' }]
 
-  // 残骸资源字段配置（只有金属和晶体）
-  type DebrisResourceKey = 'metal' | 'crystal'
-  const debrisResourceFields: { key: DebrisResourceKey }[] = [{ key: 'metal' }, { key: 'crystal' }]
+  /**
+   * 获取NPC当前名称
+   * 优先使用当前NPC的实际名称，如果NPC不存在则使用通知中保存的旧名称
+   * 支持通过ID查找，也支持通过旧名称中的ID模式匹配
+   */
+  const getNpcName = (npcId: string | undefined, fallbackName: string): string => {
+    if (!npcStore.npcs?.length) return fallbackName
 
-  // 全部资源字段配置（包含暗物质，用于探险任务）
-  type AllResourceKey = 'metal' | 'crystal' | 'deuterium' | 'darkMatter'
-  const allResourceFields: { key: AllResourceKey }[] = [{ key: 'metal' }, { key: 'crystal' }, { key: 'deuterium' }, { key: 'darkMatter' }]
+    // 1. 先通过 npcId 查找
+    if (npcId) {
+      const npc = npcStore.npcs.find(n => n.id === npcId)
+      if (npc) return npc.name
+    }
+
+    // 2. 尝试从旧名称中提取ID并查找
+    // 旧格式如 "NPC-npc_182"，新ID格式为 "npc_182"
+    const idMatch = fallbackName.match(/npc_\d+/)
+    if (idMatch) {
+      const extractedId = idMatch[0]
+      const npc = npcStore.npcs.find(n => n.id === extractedId)
+      if (npc) return npc.name
+    }
+
+    return fallbackName
+  }
+
+  /**
+   * 获取侦查报告的目标名称
+   * 显示 NPC 名称（如果是 NPC 星球）或星球名称
+   */
+  const getSpyReportTargetName = (report: SpyReport): string => {
+    // 尝试通过 targetPlayerId 获取 NPC 名称
+    if (report.targetPlayerId && report.targetPlayerId !== 'unknown') {
+      const npc = npcStore.npcs.find(n => n.id === report.targetPlayerId)
+      if (npc) return npc.name
+    }
+    // 回退到星球名称
+    return report.targetPlanetName || report.targetPlanetId
+  }
 
   const hasSelectedAny = computed(() => {
     return Object.values(clearOptions.value).some(v => v)
@@ -1235,60 +957,6 @@
     const index = gameStore.player.giftRejectedNotifications.findIndex(r => r.id === rejectionId)
     if (index > -1) {
       gameStore.player.giftRejectedNotifications.splice(index, 1)
-    }
-  }
-
-  // 查看NPC在星系中的位置
-  const viewNPCInGalaxy = (npcId?: string) => {
-    if (!npcId) return
-    const npc = npcStore.npcs.find(n => n.id === npcId)
-    if (!npc || npc.planets.length === 0) return
-
-    const targetPlanet = npc.planets[0]
-    if (!targetPlanet) return
-
-    showSpiedDialog.value = false
-    router.push({
-      path: '/galaxy',
-      query: {
-        galaxy: targetPlanet.position.galaxy,
-        system: targetPlanet.position.system,
-        highlightNpc: npcId
-      }
-    })
-  }
-
-  // 查看位置在星系中
-  const viewLocationInGalaxy = (position?: { galaxy: number; system: number; position: number }) => {
-    if (!position) return
-
-    showNPCActivityDialog.value = false
-    router.push({
-      path: '/galaxy',
-      query: {
-        galaxy: position.galaxy,
-        system: position.system
-      }
-    })
-  }
-
-  // 获取任务类型图标
-  const getMissionIcon = (missionType?: MissionType) => {
-    if (!missionType) return Package
-
-    switch (missionType) {
-      case MissionType.Transport:
-        return Package
-      case MissionType.Recycle:
-        return Recycle
-      case MissionType.Colonize:
-        return Globe
-      case MissionType.Expedition:
-        return Compass
-      case MissionType.Destroy:
-        return Skull
-      default:
-        return Package
     }
   }
 </script>

@@ -44,10 +44,13 @@ export default {
     requirementsNotMet: '前置条件未满足',
     current: '当前',
     level: '等级',
+    to: '至',
     gmModeActivated: 'GM 模式已激活！请查看导航菜单。',
     view: '查看',
+    viewDetails: '查看详情',
     exitConfirmTitle: '退出游戏',
-    exitConfirmMessage: '确定要退出游戏吗？游戏进度会自动保存。'
+    exitConfirmMessage: '确定要退出游戏吗？游戏进度会自动保存。',
+    points: '积分'
   },
   errors: {
     requirementsNotMet: '不满足前置条件',
@@ -84,6 +87,8 @@ export default {
     galaxy: '星系',
     diplomacy: '外交',
     achievements: '成就',
+    campaign: '战役',
+    ranking: '排行',
     messages: '消息',
     settings: '设置',
     gm: 'GM'
@@ -109,7 +114,8 @@ export default {
     perHour: '小时',
     perMinute: '分钟',
     hour: '小时',
-    noEnergy: '电力不足'
+    noEnergy: '电力不足',
+    temperatureBonus: '温度加成'
   },
   energy: {
     lowWarning: '电力不足，资源生产已停止！',
@@ -118,6 +124,12 @@ export default {
     noProduction: '电力不足，资源生产已停止！',
     deficitDetail: '电力缺口: {deficit}，请建造更多电站',
     buildSolarPlant: '建造电站'
+  },
+  oreDeposit: {
+    lowWarning: '矿脉储量不足！',
+    depletedWarning: '矿脉已耗尽！',
+    depletedResources: '已耗尽: {resources}',
+    lowResources: '即将耗尽: {resources}'
   },
   planet: {
     planet: '星球',
@@ -182,12 +194,20 @@ export default {
     buildSpeedBonus: '建造速度加成',
     researchSpeedBonus: '研究速度加成',
 
-    missileCapacity: '导弹容量'
+    missileCapacity: '导弹容量',
+
+    // 矿脉储量
+    oreDeposit: '矿脉储量',
+    remainingDeposit: '剩余储量',
+    depletionTime: '预计耗尽',
+    depositDepleted: '已耗尽',
+    depositWarning: '警告：矿脉储量即将耗尽（低于10%）！',
+    depositDepletedMessage: '矿脉已耗尽，产量已停止。'
   },
   buildingDescriptions: {
     metalMine: '开采金属资源',
     crystalMine: '开采晶体资源',
-    deuteriumSynthesizer: '合成重氢资源',
+    deuteriumSynthesizer: '合成重氢资源（温度越低产量越高）',
     solarPlant: '提供能源',
     fusionReactor: '使用重氢产生大量能源',
     roboticsFactory: '加快建造速度',
@@ -237,7 +257,7 @@ export default {
     colonyShip: '用于殖民新星球',
     recycler: '收集残骸场资源',
     espionageProbe: '侦察敌方星球',
-    solarSatellite: '提供额外能源，每个产生50点电力',
+    solarSatellite: '提供额外能源，产能受星球温度影响（温度越高产能越高）',
     darkMatterHarvester: '专门用于采集暗物质的特殊飞船',
     deathstar: '终极武器，能够摧毁整个行星'
   },
@@ -365,8 +385,16 @@ export default {
       buildings: '建筑',
       research: '研究',
       ships: '舰船',
-      defense: '防御'
-    }
+      defense: '防御',
+      waiting: '等待'
+    },
+    waitingEmpty: '当前没有等待中的任务',
+    addToWaiting: '添加到等待队列',
+    remove: '移除',
+    resourcesReady: '资源就绪',
+    waitingResources: '等待资源',
+    waitingQueueFull: '等待队列已满',
+    movedToQueue: '任务已移至正式队列'
   },
   overview: {
     title: '星球总览',
@@ -379,7 +407,10 @@ export default {
     consumptionSourcesDesc: '各建筑的电力消耗详情',
     totalProduction: '总产量',
     totalConsumption: '总消耗',
-    noConsumption: '当前无电力消耗'
+    noConsumption: '当前无电力消耗',
+    tabOverview: '概览',
+    tabProduction: '产量详情',
+    tabConsumption: '消耗详情'
   },
   buildingsView: {
     title: '建筑',
@@ -503,6 +534,29 @@ export default {
     spy: '侦察',
     deploy: '部署',
     expedition: '探险',
+    expeditionZone: '探险区域',
+    expeditionZoneDesc: '选择探险目的地，不同区域有不同的风险和收益',
+    requiresAstro: '需要天体物理学 {level} 级',
+    reward: '收益',
+    danger: '危险',
+    zones: {
+      nearSpace: {
+        name: '近空区域',
+        desc: '安全的近地空间，风险低但收益也较少'
+      },
+      deepSpace: {
+        name: '深空区域',
+        desc: '远离恒星的深空，可能发现更多资源'
+      },
+      unchartedSpace: {
+        name: '未知空间',
+        desc: '未经探索的区域，高风险高回报'
+      },
+      dangerousNebula: {
+        name: '危险星云',
+        desc: '充满未知危险的星云，但蕴含极其丰富的宝藏'
+      }
+    },
     recycle: '回收',
     destroy: '行星毁灭',
     transportResources: '运输资源',
@@ -636,6 +690,8 @@ export default {
     sendGift: '赠送礼物',
     debris: '残骸',
     debrisField: '残骸场',
+    oreDeposits: '矿脉储量',
+    deposits: '储量',
     scoutPlanetTitle: '侦察星球',
     attackPlanetTitle: '攻击星球',
     missileAttackTitle: '导弹攻击',
@@ -676,7 +732,9 @@ export default {
     phalanxStatus: '状态',
     phalanxStatusOutbound: '前往中',
     phalanxStatusReturning: '返回中',
-    phalanxInsufficientDeuterium: '氘不足'
+    phalanxInsufficientDeuterium: '氘不足',
+    intercepted: '被拦截',
+    defenseLosses: '防御损失'
   },
   messagesView: {
     title: '消息中心',
@@ -700,6 +758,8 @@ export default {
     attackerLosses: '攻击方损失',
     defenderLosses: '防守方损失',
     noLosses: '无损失',
+    losses: '损失统计',
+    remainingUnits: '剩余单位',
     plunder: '掠夺资源',
     debrisField: '残骸场',
     resources: '资源',
@@ -717,6 +777,18 @@ export default {
     round: '第{round}回合',
     attackerRemainingPower: '攻击方剩余火力',
     defenderRemainingPower: '防守方剩余火力',
+    // 战斗动画相关
+    playAnimation: '播放动画',
+    showDetails: '显示详情',
+    speed: '速度',
+    power: '战斗力',
+    battleLogEmpty: '战斗日志为空',
+    roundStarted: '第{round}回合开始',
+    shipDestroyed: '{count}艘{ship}被摧毁',
+    defenseDestroyed: '{count}座{defense}被摧毁',
+    attackerWins: '攻击方获胜',
+    defenderWins: '防守方获胜',
+    roundsPlayed: '回合已播放',
     spied: '被侦查',
     spiedNotification: '被侦查通知',
     noSpiedNotifications: '暂无被侦查通知',
@@ -930,6 +1002,7 @@ export default {
     inAppNotifications: '页面内通知',
     constructionComplete: '建筑完成',
     researchComplete: '研究完成',
+    unlockNotification: '解锁通知',
     browserPermission: '启用浏览器通知',
     permissionGranted: '已获得权限',
     permissionDenied: '权限被拒绝/未获得',
@@ -937,11 +1010,22 @@ export default {
     notificationsDisabled: '启用上方任一开关以配置具体通知',
     suppressInFocus: '页面聚焦时不发送浏览器通知',
     expandTypes: '展开详细设置',
-    collapseTypes: '收起详细设置'
+    collapseTypes: '收起详细设置',
+    // NPC名称更新
+    npcNameUpdate: 'NPC名称更新',
+    npcNameUpdateTitle: '检测到旧版NPC名称',
+    npcNameUpdateMessage: '发现 {count} 个NPC使用旧版名称格式。是否更新为新的本地化名称？',
+    npcNameUpdateConfirm: '更新名称',
+    npcNameUpdateCancel: '保持原样',
+    npcNameUpdateSuccess: '已成功更新 {count} 个NPC名称',
+    npcNameUpdateSkipped: '已跳过NPC名称更新'
   },
   notifications: {
     constructionComplete: '建造完成',
-    researchComplete: '研究完成'
+    researchComplete: '研究完成',
+    newUnlock: '新内容解锁',
+    building: '建筑',
+    technology: '科技'
   },
   gmView: {
     title: 'GM 管理面板',
@@ -1150,6 +1234,21 @@ export default {
         easy: '简单',
         medium: '普通',
         hard: '困难'
+      },
+      aiType: 'AI类型',
+      aiTypes: {
+        aggressive: '侵略型',
+        defensive: '防守型',
+        trader: '商人型',
+        expansionist: '扩张型',
+        balanced: '平衡型'
+      },
+      aiTypeDescriptions: {
+        aggressive: '积极侦查和攻击，反击猛烈',
+        defensive: '很少主动攻击，被攻击后强烈反击',
+        trader: '几乎不攻击，更愿意交易和送礼',
+        expansionist: '专注发展，较少攻击',
+        balanced: '根据情况动态调整策略'
       },
       reputation: '好感度',
       spyProbes: '侦察机数量',
@@ -1536,6 +1635,340 @@ export default {
       watched: '被NPC侦查次数',
       robbed: '被NPC回收残骸次数',
       lostToNPC: '被NPC回收的残骸资源总量'
+    }
+  },
+  ranking: {
+    title: '排行榜',
+    totalPlayers: '共 {count} 名玩家',
+    yourRanking: '你的排名',
+    categories: {
+      total: '总积分',
+      building: '建筑',
+      research: '研究',
+      fleet: '舰队',
+      defense: '防御'
+    },
+    points: '分',
+    name: '名称',
+    planets: '星球',
+    details: '详情',
+    you: '你',
+    scoreBreakdown: '积分详情',
+    noData: '暂无排行数据'
+  },
+  campaign: {
+    name: '战役',
+    description: '探索神秘的银河系，揭开古代文明的秘密',
+    totalProgress: '总进度',
+    questsCompleted: '任务完成',
+    chapter: '章节',
+    branch: '分支',
+    startQuest: '开始任务',
+    claimRewards: '领取奖励',
+    objectives: '任务目标',
+    objectivesLabel: '目标',
+    rewards: '任务奖励',
+    completed: '已完成',
+    inProgress: '进行中',
+    available: '可接取',
+    locked: '未解锁',
+    notifications: {
+      questStarted: '任务已开始',
+      questCompleted: '任务完成！',
+      rewardsClaimed: '奖励已领取',
+      objectiveCompleted: '目标完成',
+      chapterUnlocked: '新章节已解锁'
+    },
+    dialogue: {
+      skip: '跳过',
+      continue: '继续',
+      finish: '完成',
+      player: '指挥官',
+      npc: 'NPC',
+      narrator: '旁白',
+      mysterious: '神秘信号',
+      unknownSource: '信号来源不明'
+    },
+    chapters: {
+      '1': {
+        title: '起源之地',
+        description: '建设你的家园，迈出星际征途的第一步',
+        backgroundStory: '你是一位年轻的星际指挥官，刚刚获得了属于自己的第一颗星球。在这片陌生的宇宙中，你将建设家园，发展科技，探索未知的银河系深处...'
+      },
+      '2': {
+        title: '星际探索',
+        description: '探索宇宙，发现神秘的古代遗迹',
+        backgroundStory: '随着你的势力不断壮大，来自深空的神秘信号引起了你的注意。这些信号似乎指向一个古老的秘密，等待着勇敢的探索者去揭开...'
+      },
+      '3': {
+        title: '银河外交',
+        description: '与其他势力建立联系，在星际政治中立足',
+        backgroundStory: '银河系中并不只有你一方势力。其他文明正在崛起，你需要决定是与他们为敌还是结盟。外交的智慧将决定你的帝国能走多远...'
+      },
+      '4': {
+        title: '暗影降临',
+        description: '面对强大的敌人，保卫你的领地',
+        backgroundStory: '暗影中潜伏着危险。一个强大的敌对势力已经盯上了你的领地。战争不可避免，你必须做好准备，迎接即将到来的风暴...'
+      },
+      '5': {
+        title: '古代秘密',
+        description: '揭开银河系最深处的秘密',
+        backgroundStory: '所有的线索都指向银河系最神秘的区域。在那里，隐藏着古代文明留下的终极秘密。你准备好揭开这一切了吗？'
+      }
+    },
+    quests: {
+      '1_1': {
+        title: '家园建设',
+        description: '建造基础设施，为你的星球奠定发展基础'
+      },
+      '1_2': {
+        title: '科技启蒙',
+        description: '研究基础科技，开启科技发展之路'
+      },
+      '1_3': {
+        title: '第一艘船',
+        description: '建造你的第一艘战舰'
+      },
+      '1_4': {
+        title: '陌生邻居',
+        description: '侦查附近星系中的其他势力'
+      },
+      '1_5': {
+        title: '初次接触',
+        description: '与附近的NPC势力建立初步联系'
+      },
+      '2_1': {
+        title: '殖民先驱',
+        description: '殖民你的第一颗新星球'
+      },
+      '2_2': {
+        title: '深空探险',
+        description: '派遣舰队进行远征探险'
+      },
+      '2_3': {
+        title: '神秘信号',
+        description: '调查来自深空的神秘信号'
+      },
+      '2_4': {
+        title: '遗迹调查',
+        description: '探索发现的古代遗迹'
+      },
+      '2_5': {
+        title: '解密档案',
+        description: '研究从遗迹中获得的数据'
+      },
+      '3_1': {
+        title: '和平使者',
+        description: '通过外交手段提升与NPC的关系'
+      },
+      '3_2': {
+        title: '利益交换',
+        description: '与友好势力建立稳定的关系'
+      },
+      '3_3': {
+        title: '共同威胁',
+        description: '发现潜在的敌对势力'
+      },
+      '3_4': {
+        title: '联盟谈判',
+        description: '与友好NPC建立正式同盟'
+      },
+      '3_5': {
+        title: '备战风暴',
+        description: '建设防御设施，准备迎接挑战'
+      },
+      '4_1': {
+        title: '前哨遭袭',
+        description: '抵御敌对势力的首次进攻'
+      },
+      '4_2': {
+        title: '情报收集',
+        description: '侦查敌方的军事部署'
+      },
+      '4_3': {
+        title: '反击行动',
+        description: '对敌方发起反击'
+      },
+      '4_4': {
+        title: '资源争夺',
+        description: '回收战场残骸，获取资源'
+      },
+      '4_5': {
+        title: '决战前夕',
+        description: '建造强大的舰队，准备最终决战'
+      },
+      '5_1': {
+        title: '遗迹深处',
+        description: '探索遗迹的最深处'
+      },
+      '5_2': {
+        title: '古代科技',
+        description: '解锁古代文明的科技'
+      },
+      '5_3': {
+        title: '最终对决',
+        description: '与神秘敌人进行最终决战'
+      },
+      '5_4': {
+        title: '新纪元',
+        description: '建立新的殖民地，开启新时代'
+      },
+      '5_5': {
+        title: '传承延续',
+        description: '继续发展，征服更多的星系'
+      }
+    },
+    objectiveTypes: {
+      buildBuilding: '建造 {building} 到 {level} 级',
+      researchTech: '研究 {tech} 到 {level} 级',
+      produceShips: '生产 {count} 艘 {ship}',
+      accumulateResources: '积累 {amount} {resource}',
+      defeatNPC: '击败 {npc}',
+      winBattles: '赢得 {count} 场战斗',
+      recycleDebris: '回收 {amount} 残骸',
+      reachRelation: '与 {npc} 达到 {level} 关系',
+      sendGift: '向 {npc} 送礼 {count} 次',
+      formAlliance: '与 {npc} 结盟',
+      colonize: '殖民 {count} 颗星球',
+      expedition: '完成 {count} 次探险',
+      spyTarget: '侦查 {target}'
+    },
+    errors: {
+      questNotFound: '任务不存在',
+      questNotAvailable: '任务不可接取',
+      questNotActive: '任务未激活',
+      questNotCompleted: '任务未完成',
+      rewardsAlreadyClaimed: '奖励已领取',
+      prerequisiteNotMet: '前置任务未完成'
+    },
+    speakers: {
+      ancientVoice: '古代之声',
+      neighborNPC: '邻近势力',
+      mysteriousSignal: '神秘信号',
+      enemyCommander: '敌方指挥官'
+    },
+    objectiveDescriptions: {
+      buildMetalMine: '建造金属矿到2级',
+      buildCrystalMine: '建造晶体矿到2级',
+      buildSolarPlant: '建造太阳能电站到2级',
+      buildResearchLab: '建造研究实验室到1级',
+      researchEnergy: '研究能量技术到1级',
+      buildShipyard: '建造船坞到2级',
+      researchCombustion: '研究燃烧驱动到1级',
+      buildLightFighters: '建造5艘轻型战斗机',
+      researchEspionage: '研究间谍技术到2级',
+      buildSpyProbes: '建造3艘间谍探测器',
+      spyAnyNPC: '侦查任意NPC星球',
+      sendGiftToNPC: '向任意NPC送礼',
+      researchAstrophysics: '研究天体物理学到1级',
+      buildColonyShip: '建造殖民船',
+      colonizeNewPlanet: '殖民新星球',
+      completeExpedition: '完成远征任务',
+      discoverRuins: '发现古代遗迹',
+      researchComputer: '研究电脑技术到4级',
+      improveRelation: '提升与NPC的关系',
+      reachFriendly: '与NPC达到友好关系',
+      spyHostileNPC: '侦查敌对NPC',
+      formAlliance: '与友好NPC结盟',
+      buildDefenses: '建造防御设施',
+      winDefenseBattle: '赢得防御战斗',
+      spyEnemyPlanet: '侦查敌方星球',
+      attackEnemy: '攻击敌方',
+      recycleDebris: '回收残骸',
+      buildBattleships: '建造10艘战列舰',
+      exploreDeepRuins: '探索遗迹深处',
+      researchHyperspace: '研究超空间技术',
+      defeatBoss: '击败神秘敌人',
+      colonizeSpecial: '殖民特殊位置',
+      continueDevelopment: '继续发展'
+    },
+    dialogues: {
+      '1_1': {
+        prologue_1: '欢迎来到银河系，年轻的指挥官。这片广袤的宇宙等待着你的探索。首先，让我们建设好你的家园星球。',
+        prologue_2: '我感应到了新的意识觉醒...有趣...让我们看看你能走多远...'
+      },
+      '1_2': {
+        prologue_1: '基础设施已经建设完成。现在，是时候发展科技了。建造研究实验室，开启你的科技之路。'
+      },
+      '1_3': {
+        prologue_1: '有了科技的支持，你可以开始建造舰队了。建造船坞，生产你的第一艘战舰。'
+      },
+      '1_4': {
+        prologue_1: '你的舰队已经成型。现在，让我们了解一下周围的环境。派出间谍探测器，侦查附近的势力。',
+        prologue_2: '你并不孤单...银河系中还有其他文明存在...'
+      },
+      '1_5': {
+        prologue_1: '你已经发现了邻近的势力。外交是一门艺术，尝试与他们建立联系。',
+        epilogue_1: '感谢你的礼物，指挥官。希望我们能成为朋友。',
+        epilogue_2: '很好...建立联系是探索更深秘密的第一步...'
+      },
+      '2_1': {
+        prologue_1: '你的势力已经稳固。是时候扩张领地了。研究天体物理学，建造殖民船，探索新的星球。',
+        prologue_2: '宇宙是无限的...更多的星球意味着更多的可能性...'
+      },
+      '2_2': {
+        prologue_1: '殖民成功！但宇宙深处还有更多秘密等待发现。派遣舰队进行远征探险吧。',
+        prologue_2: '远方传来微弱的信号...那里有什么在等待着你...'
+      },
+      '2_3': {
+        prologue_1: '你的探险队发现了异常信号。这些信号似乎来自一个古老的文明...调查它们的来源。',
+        epilogue_1: '这些符号...是古代文明的遗迹！继续调查，揭开它们的秘密。'
+      },
+      '2_4': {
+        prologue_1: '你发现了古代遗迹的位置。派遣舰队前去探索，看看能发现什么。'
+      },
+      '2_5': {
+        prologue_1: '遗迹中发现了大量数据档案。研究这些数据，也许能解锁新的科技。'
+      },
+      '3_1': {
+        prologue_1: '在探索的同时，也不要忘记外交。与周围的势力保持良好关系对你有益。'
+      },
+      '3_2': {
+        prologue_1: '有些势力对你表示了友好。继续加深关系，也许能获得更多支持。'
+      },
+      '3_3': {
+        prologue_1: '情报显示，有敌对势力正在暗中观察你。保持警惕，侦查他们的动向。'
+      },
+      '3_4': {
+        prologue_1: '与友好势力建立正式同盟，在面对威胁时互相支持。'
+      },
+      '3_5': {
+        prologue_1: '威胁正在逼近。建设防御设施，准备迎接可能的冲突。'
+      },
+      '4_1': {
+        prologue_1: '敌人发动了进攻！保卫你的星球！',
+        epilogue_1: '你成功击退了敌人的第一波进攻。但这只是开始...'
+      },
+      '4_2': {
+        prologue_1: '敌人退却了，但他们还会回来。侦查他们的星球，了解他们的实力。'
+      },
+      '4_3': {
+        prologue_1: '是时候反击了。进攻敌人的星球，削弱他们的力量。'
+      },
+      '4_4': {
+        prologue_1: '战场上留下了大量残骸。回收这些资源，为下一场战斗做准备。'
+      },
+      '4_5': {
+        prologue_1: '最终决战即将来临。建造强大的舰队，准备迎接最后的挑战。'
+      },
+      '5_1': {
+        prologue_1: '所有线索都指向遗迹的最深处。那里隐藏着古代文明最核心的秘密。',
+        prologue_2: '你终于来到了这里...真相即将揭晓...'
+      },
+      '5_2': {
+        prologue_1: '在遗迹深处，你发现了失落的古代科技。研究并解锁它们的力量。'
+      },
+      '5_3': {
+        prologue_1: '一个神秘的敌人出现了。这是最后的挑战，击败它！',
+        epilogue_1: '你做到了！古代的守护者已被击败。银河系的秘密向你敞开。'
+      },
+      '5_4': {
+        prologue_1: '和平终于来临。在这个新纪元中，建立新的殖民地，扩展你的帝国。'
+      },
+      '5_5': {
+        prologue_1: '你的传奇才刚刚开始。继续探索，征服更多的星系！',
+        epilogue_1: '银河系广阔无垠，还有无数秘密等待你去发现...'
+      }
     }
   }
 }

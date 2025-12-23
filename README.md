@@ -12,7 +12,21 @@
   [![Vite](https://img.shields.io/badge/Vite-7.2-646CFF.svg)](https://vitejs.dev/)
   [![Go](https://img.shields.io/badge/Go-1.23-79D4FD.svg)](https://golang.org/)
 
-  [English](README-EN.md) | 简体中文
+  **下载**
+  [![Android x86_64](https://img.shields.io/badge/Android-x86__64-3DDC84?logo=android&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-x86_64.APK)
+  [![Android arm64](https://img.shields.io/badge/Android-arm64--v8a-3DDC84?logo=android&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-arm64-v8a.APK)
+  [![Android armv7](https://img.shields.io/badge/Android-armeabi--v7a-3DDC84?logo=android&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-armeabi-v7a.APK)
+
+  [![Windows Server](https://img.shields.io/badge/Server-Windows-0078D6?logo=windows&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/ogame-server-win.exe)
+  [![Linux](https://img.shields.io/badge/Server-Linux%20amd64-FCC624?logo=linux&logoColor=black)](https://github.com/setube/ogame-vue-ts/releases/latest/download/ogame-server-linux)
+  [![Linux arm64](https://img.shields.io/badge/Server-Linux%20amd64-FCC624?logo=linux&logoColor=black)](https://github.com/setube/ogame-vue-ts/releases/latest/download/ogame-server-linux-arm64)
+  [![macOS](https://img.shields.io/badge/Server-macOS%20ARM-000000?logo=apple&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-mac.dmg)
+
+  [![Windows Desktop](https://img.shields.io/badge/Desktop-Windows-0078D6?logo=windows&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-Setup.exe)
+  [![Ubuntu Desktop](https://img.shields.io/badge/Desktop-Ubuntu-E95420?logo=ubuntu&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-linux.AppImage)
+  [![macOS Desktop](https://img.shields.io/badge/Desktop-macOS-000000?logo=apple&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-mac.dmg)
+
+  简体中文 | [English](README-EN.md) | [繁體中文](README-zh-TW.md) | [Deutsch](README-DE.md) | [Русский](README-RU.md) | [한국어](README-KO.md)
 
 </div>
 
@@ -49,28 +63,6 @@ OGame Vue TS 是一款受经典 OGame 游戏启发的单机版、基于浏览器
 - **国际化:** 自定义 i18n 实现
 
 ## 快速开始
-
-### 下载构建版本
-
-#### 服务端
-
-[Windows](/releases/latest/download/ogame-windows-amd64.exe)
-
-[Linux amd64](/releases/latest/download/ogame-linux-amd64)
-
-[Linux arm64](/releases/latest/download/ogame-linux-arm64)
-
-[MacOS Intel](/releases/latest/download/ogame-macos-amd64)
-
-[MacOS](/releases/latest/download/ogame-macos-arm64)
-
-#### 桌面版
-
-[Windows](/releases/latest/download/OGame.Setup.exe)
-
-[Ubuntu](/releases/latest/download/OGame.AppImage)
-
-[MacOS](/releases/latest/download/OGame-mac.dmg)
 
 ### 环境要求
 
@@ -112,12 +104,12 @@ pnpm preview
 
 ## 支持的语言
 
-- 🇺🇸 English (英语)
-- 🇨🇳 简体中文
-- 🇹🇼 繁體中文
-- 🇩🇪 Deutsch (德语)
-- 🇷🇺 Русский (俄语)
-- 🇰🇷 한국어 (韩语)
+- 简体中文
+- 繁體中文
+- English (英语)
+- Deutsch (德语)
+- Русский (俄语)
+- 한국어 (韩语)
 
 ## 游戏特性
 
@@ -186,7 +178,7 @@ pnpm preview
 ---
 
 <div align="center">
-  用 ❤️ 制作，作者：谦君
+  用 ❤️ 制作，作者：<a href="https://github.com/setube">setube</a>
   <br>
   © 2025 - 保留所有权利（除 CC BY-NC 4.0 许可证授予的权利外）
 </div>

@@ -169,6 +169,14 @@
                 @update:checked="(val: boolean) => updateTypeSetting('research', val)"
               />
             </div>
+            <!-- 解锁通知 -->
+            <div class="flex items-center justify-between">
+              <Label class="font-normal cursor-pointer" @click="toggleType('unlock')">{{ t('settings.unlockNotification') }}</Label>
+              <Switch
+                :checked="gameStore.notificationSettings?.types.unlock"
+                @update:checked="(val: boolean) => updateTypeSetting('unlock', val)"
+              />
+            </div>
           </div>
         </div>
       </CardContent>
@@ -338,8 +346,8 @@
   import pkg from '../../package.json'
   import { checkLatestVersion, canCheckVersion } from '@/utils/versionCheck'
   import type { VersionInfo } from '@/utils/versionCheck'
-  import UpdateDialog from '@/components/UpdateDialog.vue'
-  import PrivacyDialog from '@/components/PrivacyDialog.vue'
+  import UpdateDialog from '@/components/dialogs/UpdateDialog.vue'
+  import PrivacyDialog from '@/components/dialogs/PrivacyDialog.vue'
   import { useHints } from '@/composables/useHints'
 
   const { t } = useI18n()
@@ -364,7 +372,7 @@
       browser: false,
       inApp: true,
       suppressInFocus: false,
-      types: { construction: true, research: true }
+      types: { construction: true, research: true, unlock: true }
     }
   }
 
@@ -390,13 +398,13 @@
     }
   }
 
-  const updateTypeSetting = (key: 'construction' | 'research', val: boolean) => {
+  const updateTypeSetting = (key: 'construction' | 'research' | 'unlock', val: boolean) => {
     if (gameStore.notificationSettings) {
       gameStore.notificationSettings.types[key] = val
     }
   }
 
-  const toggleType = (key: 'construction' | 'research') => {
+  const toggleType = (key: 'construction' | 'research' | 'unlock') => {
     if (gameStore.notificationSettings) {
       const current = gameStore.notificationSettings.types[key]
       gameStore.notificationSettings.types[key] = !current

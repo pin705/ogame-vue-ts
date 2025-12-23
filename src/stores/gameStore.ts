@@ -32,6 +32,7 @@ export const useGameStore = defineStore('game', {
       technologies: {} as Record<TechnologyType, number>,
       officers: {} as Record<OfficerType, Officer>,
       researchQueue: [] as BuildQueueItem[],
+      waitingResearchQueue: [],
       fleetMissions: [] as FleetMission[],
       missileAttacks: [] as MissileAttack[],
       battleReports: [] as BattleResult[],
@@ -57,7 +58,8 @@ export const useGameStore = defineStore('game', {
       suppressInFocus: false,
       types: {
         construction: true,
-        research: true
+        research: true,
+        unlock: true
       }
     }
   }),

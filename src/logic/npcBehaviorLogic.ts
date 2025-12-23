@@ -1,8 +1,115 @@
 import type { NPC, Planet, Player, FleetMission, SpyReport, SpiedNotification, IncomingFleetAlert, Fleet, DebrisField } from '@/types/game'
-import { MissionType, ShipType, TechnologyType, RelationStatus } from '@/types/game'
+import { MissionType, ShipType, TechnologyType, RelationStatus, NPCAIType } from '@/types/game'
 import * as fleetLogic from './fleetLogic'
 import * as diplomaticLogic from './diplomaticLogic'
 import { DIPLOMATIC_CONFIG, SHIPS } from '@/config/gameConfig'
+
+/**
+ * AI 类型行为修改器
+ * 根据 NPC 的 AI 类型调整其行为参数
+ */
+export interface AIBehaviorModifier {
+  spyFrequencyMultiplier: number // 侦查频率倍率（越高侦查越频繁）
+  attackFrequencyMultiplier: number // 攻击频率倍率
+  attackProbabilityMultiplier: number // 攻击概率倍率
+  fleetSizeMultiplier: number // 出击舰队比例倍率
+  giftProbabilityMultiplier: number // 赠送礼物概率倍率
+  revengeMultiplier: number // 反击倾向倍率
+  defenseFocus: boolean // 是否优先发展防御
+  willAttackWhenHostile: boolean // 敌对时是否会主动攻击
+  willSpyWhenHostile: boolean // 敌对时是否会侦查
+}
+
+/**
+ * 获取 AI 类型的行为修改器
+ */
+export const getAIBehaviorModifier = (aiType?: NPCAIType): AIBehaviorModifier => {
+  switch (aiType) {
+    case NPCAIType.Aggressive:
+      // 侵略型：高频侦查攻击，大舰队出击，不送礼，强烈反击
+      return {
+        spyFrequencyMultiplier: 1.5,
+        attackFrequencyMultiplier: 1.5,
+        attackProbabilityMultiplier: 1.3,
+        fleetSizeMultiplier: 1.2,
+        giftProbabilityMultiplier: 0,
+        revengeMultiplier: 2.0,
+        defenseFocus: false,
+        willAttackWhenHostile: true,
+        willSpyWhenHostile: true
+      }
+
+    case NPCAIType.Defensive:
+      // 防守型：低频侦查，几乎不主动攻击，但被攻击后强烈反击
+      return {
+        spyFrequencyMultiplier: 0.3,
+        attackFrequencyMultiplier: 0.1,
+        attackProbabilityMultiplier: 0.1,
+        fleetSizeMultiplier: 0.5,
+        giftProbabilityMultiplier: 0.5,
+        revengeMultiplier: 3.0, // 反击很强烈
+        defenseFocus: true,
+        willAttackWhenHostile: false, // 即使敌对也不主动攻击
+        willSpyWhenHostile: true // 但会侦查监视
+      }
+
+    case NPCAIType.Trader:
+      // 商人型：几乎不攻击，高概率送礼，被攻击后轻微反击
+      return {
+        spyFrequencyMultiplier: 0.2,
+        attackFrequencyMultiplier: 0.05,
+        attackProbabilityMultiplier: 0.05,
+        fleetSizeMultiplier: 0.3,
+        giftProbabilityMultiplier: 3.0, // 高概率送礼
+        revengeMultiplier: 0.5, // 反击意愿低
+        defenseFocus: false,
+        willAttackWhenHostile: false,
+        willSpyWhenHostile: false
+      }
+
+    case NPCAIType.Expansionist:
+      // 扩张型：中等侦查频率，较少攻击，专注发展
+      return {
+        spyFrequencyMultiplier: 0.7,
+        attackFrequencyMultiplier: 0.4,
+        attackProbabilityMultiplier: 0.5,
+        fleetSizeMultiplier: 0.6,
+        giftProbabilityMultiplier: 1.0,
+        revengeMultiplier: 1.0,
+        defenseFocus: false,
+        willAttackWhenHostile: true,
+        willSpyWhenHostile: true
+      }
+
+    case NPCAIType.Balanced:
+    default:
+      // 平衡型（默认）：标准行为
+      return {
+        spyFrequencyMultiplier: 1.0,
+        attackFrequencyMultiplier: 1.0,
+        attackProbabilityMultiplier: 1.0,
+        fleetSizeMultiplier: 1.0,
+        giftProbabilityMultiplier: 1.0,
+        revengeMultiplier: 1.0,
+        defenseFocus: false,
+        willAttackWhenHostile: true,
+        willSpyWhenHostile: true
+      }
+  }
+}
+
+/**
+ * 根据 AI 类型调整动态行为配置
+ */
+export const applyAIModifierToConfig = (config: DynamicBehaviorConfig, modifier: AIBehaviorModifier): DynamicBehaviorConfig => {
+  return {
+    ...config,
+    spyInterval: Math.floor(config.spyInterval / modifier.spyFrequencyMultiplier),
+    attackInterval: Math.floor(config.attackInterval / modifier.attackFrequencyMultiplier),
+    attackProbability: Math.min(1.0, config.attackProbability * modifier.attackProbabilityMultiplier),
+    attackFleetSizeRatio: Math.min(1.0, config.attackFleetSizeRatio * modifier.fleetSizeMultiplier)
+  }
+}
 
 /**
  * NPC行为决策系统
@@ -100,6 +207,9 @@ export const shouldNPCSpyPlayer = (npc: NPC, player: Player, currentTime: number
     return false
   }
 
+  // 获取 AI 行为修改器
+  const aiModifier = getAIBehaviorModifier(npc.aiType)
+
   // 检查外交关系 - 统一使用 npc.relations
   const relation = npc.relations?.[player.id]
 
@@ -118,9 +228,15 @@ export const shouldNPCSpyPlayer = (npc: NPC, player: Player, currentTime: number
     return false
   }
 
-  // 只有敌对NPC才会到达这里，检查冷却时间
+  // 根据 AI 类型判断是否会侦查
+  if (!aiModifier.willSpyWhenHostile) {
+    return false
+  }
+
+  // 只有敌对NPC才会到达这里，检查冷却时间（根据 AI 类型调整）
+  const adjustedConfig = applyAIModifierToConfig(config, aiModifier)
   const lastSpyTime = npc.lastSpyTime || 0
-  if (currentTime - lastSpyTime < config.spyInterval * 1000) {
+  if (currentTime - lastSpyTime < adjustedConfig.spyInterval * 1000) {
     return false
   }
 
@@ -137,6 +253,9 @@ export const shouldNPCAttackPlayer = (npc: NPC, player: Player, currentTime: num
   if (playerPoints < 1000) {
     return false
   }
+
+  // 获取 AI 行为修改器
+  const aiModifier = getAIBehaviorModifier(npc.aiType)
 
   // 检查外交关系 - 统一使用 npc.relations
   const relation = npc.relations?.[player.id]
@@ -156,9 +275,15 @@ export const shouldNPCAttackPlayer = (npc: NPC, player: Player, currentTime: num
     return false
   }
 
-  // 检查攻击冷却
+  // 根据 AI 类型判断是否会主动攻击
+  if (!aiModifier.willAttackWhenHostile) {
+    return false
+  }
+
+  // 检查攻击冷却（根据 AI 类型调整）
+  const adjustedConfig = applyAIModifierToConfig(config, aiModifier)
   const lastAttackTime = npc.lastAttackTime || 0
-  if (currentTime - lastAttackTime < config.attackInterval * 1000) {
+  if (currentTime - lastAttackTime < adjustedConfig.attackInterval * 1000) {
     return false
   }
 
@@ -167,8 +292,14 @@ export const shouldNPCAttackPlayer = (npc: NPC, player: Player, currentTime: num
     return false
   }
 
-  // 有侦查报告的情况下，敌对NPC一定会攻击（移除概率限制）
-  // 这样保证侦查后会跟进攻击，而不是无意义地反复侦查
+  // 根据 AI 类型的攻击概率决定是否攻击
+  // 侵略型总是攻击，其他类型按概率
+  if (aiModifier.attackProbabilityMultiplier < 1.0) {
+    if (Math.random() > adjustedConfig.attackProbability) {
+      return false
+    }
+  }
+
   return true
 }
 
@@ -183,20 +314,32 @@ export const shouldNPCGiftPlayer = (npc: NPC, player: Player, currentTime: numbe
     return false
   }
 
-  // 检查上次赠送时间
+  // 获取 AI 行为修改器
+  const aiModifier = getAIBehaviorModifier(npc.aiType)
+
+  // 侵略型 NPC 永远不送礼
+  if (aiModifier.giftProbabilityMultiplier === 0) {
+    return false
+  }
+
+  // 检查上次赠送时间（商人型间隔更短）
   const lastGiftTime = (npc as any).lastGiftTime || 0
-  if (currentTime - lastGiftTime < NPC_GIFT_CONFIG.CHECK_INTERVAL * 1000) {
+  const giftInterval = NPC_GIFT_CONFIG.CHECK_INTERVAL / aiModifier.giftProbabilityMultiplier
+  if (currentTime - lastGiftTime < giftInterval * 1000) {
     return false
   }
 
   // 检查好感度 - 统一使用 npc.relations
+  // 商人型 NPC 好感度门槛更低
   const relation = npc.relations?.[player.id]
-  if (!relation || relation.reputation < NPC_GIFT_CONFIG.MIN_REPUTATION) {
+  const minReputation = npc.aiType === NPCAIType.Trader ? NPC_GIFT_CONFIG.MIN_REPUTATION * 0.5 : NPC_GIFT_CONFIG.MIN_REPUTATION
+  if (!relation || relation.reputation < minReputation) {
     return false
   }
 
-  // 随机概率
-  return Math.random() < NPC_GIFT_CONFIG.GIFT_PROBABILITY
+  // 随机概率（根据 AI 类型调整）
+  const giftProbability = NPC_GIFT_CONFIG.GIFT_PROBABILITY * aiModifier.giftProbabilityMultiplier
+  return Math.random() < giftProbability
 }
 
 /**
@@ -1143,19 +1286,29 @@ export const shouldNPCRevenge = (npc: NPC, currentTime: number): boolean => {
     return false
   }
 
+  // 获取 AI 行为修改器
+  const aiModifier = getAIBehaviorModifier(npc.aiType)
+
+  // 商人型 NPC 反击意愿很低，可能选择不反击
+  if (aiModifier.revengeMultiplier < 1.0 && Math.random() > aiModifier.revengeMultiplier) {
+    return false
+  }
+
   const attackRecord = npc.attackedBy[npc.revengeTarget]
   if (!attackRecord) {
     return false
   }
 
-  // 被攻击后24小时内可以反击
+  // 被攻击后24小时内可以反击（防守型可能更长时间记仇）
+  const revengeWindow = 24 * 3600 * 1000 * aiModifier.revengeMultiplier
   const timeSinceLastAttack = currentTime - attackRecord.lastAttackTime
-  if (timeSinceLastAttack > 24 * 3600 * 1000) {
+  if (timeSinceLastAttack > revengeWindow) {
     return false
   }
 
-  // 至少等待10分钟后再反击（给NPC时间准备）
-  if (timeSinceLastAttack < 600 * 1000) {
+  // 至少等待一段时间后再反击（防守型反应更快）
+  const minWaitTime = aiModifier.defenseFocus ? 300 * 1000 : 600 * 1000 // 防守型5分钟，其他10分钟
+  if (timeSinceLastAttack < minWaitTime) {
     return false
   }
 
@@ -1187,10 +1340,15 @@ export const createNPCRevengeMission = (npc: NPC, allPlanets: Planet[], config: 
     return null
   }
 
-  // 反击时派出更多舰队（比正常攻击多50%）
+  // 获取 AI 行为修改器
+  const aiModifier = getAIBehaviorModifier(npc.aiType)
+
+  // 反击时派出更多舰队（基础多50%，根据 AI 类型调整）
+  // 防守型/侵略型反击更猛烈
+  const revengeMultiplier = 1.5 * aiModifier.revengeMultiplier
   const revengeFleet = decideAttackFleet(npc, npcPlanet, {} as SpyReport, {
     ...config,
-    attackFleetSizeRatio: Math.min(1.0, config.attackFleetSizeRatio * 1.5)
+    attackFleetSizeRatio: Math.min(1.0, config.attackFleetSizeRatio * revengeMultiplier)
   })
 
   if (!revengeFleet) {
@@ -1257,6 +1415,7 @@ export interface NPCDiagnosticInfo {
   npcId: string
   npcName: string
   difficulty: string
+  aiType?: NPCAIType // AI 行为类型
   relationStatus: string // 保持原有字段用于显示
   relationStatusKey: RelationStatusKey // 翻译键
   reputation: number
@@ -1374,6 +1533,7 @@ export const diagnoseNPCBehavior = (npcs: NPC[], player: Player, currentTime: nu
       npcId: npc.id,
       npcName: npc.name,
       difficulty: npc.difficulty,
+      aiType: npc.aiType,
       relationStatus,
       relationStatusKey,
       reputation,

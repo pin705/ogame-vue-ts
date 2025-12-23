@@ -1,5 +1,5 @@
-import { BuildingType, TechnologyType, ShipType, DefenseType, OfficerType } from '@/types/game'
-import type { BuildingConfig, TechnologyConfig, ShipConfig, DefenseConfig, OfficerConfig } from '@/types/game'
+import { BuildingType, TechnologyType, ShipType, DefenseType, OfficerType, ExpeditionZone } from '@/types/game'
+import type { BuildingConfig, TechnologyConfig, ShipConfig, DefenseConfig, OfficerConfig, ExpeditionZoneConfig } from '@/types/game'
 
 // 建筑配置数据
 export const BUILDINGS: Record<BuildingType, BuildingConfig> = {
@@ -835,7 +835,7 @@ export const SHIPS: Record<ShipType, ShipConfig> = {
   [ShipType.SolarSatellite]: {
     id: ShipType.SolarSatellite,
     name: '太阳能卫星',
-    description: '提供额外能源，每个产生50点能量',
+    description: '提供额外能源，产能受星球温度影响',
     cost: { metal: 0, crystal: 2000, deuterium: 500, darkMatter: 0, energy: 0 },
     buildTime: 10,
     cargoCapacity: 0,
@@ -1197,5 +1197,102 @@ export const DIPLOMATIC_CONFIG = {
     MAX_REJECTION_PROBABILITY: 0.8, // 最大拒绝概率（80%，即使关系很差）
     GIFT_EXPIRATION_DAYS: 7, // 礼物通知过期天数
     REJECTION_REPUTATION_PENALTY: -5 // 拒绝礼物导致的好感度降低
+  }
+}
+
+// 矿脉储量配置
+export const ORE_DEPOSIT_CONFIG = {
+  // 基础储量（单位：资源量）
+  BASE_DEPOSITS: {
+    metal: 50_000_000, // 5000万金属
+    crystal: 30_000_000, // 3000万晶体
+    deuterium: 15_000_000 // 1500万重氢
+  },
+  // 位置系数（位置1-15），影响资源分布
+  // 内圈(1-4)晶体多，中圈(5-10)均衡，外圈(11-15)重氢多
+  POSITION_MULTIPLIERS: {
+    metal: [0.8, 0.85, 0.9, 0.95, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.95, 0.9, 0.85, 0.8, 0.75],
+    crystal: [1.3, 1.25, 1.2, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7],
+    deuterium: [0.5, 0.55, 0.6, 0.7, 0.8, 0.9, 1.0, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
+  },
+  // 银河系系数（每个银河系增加5%储量）
+  GALAXY_MULTIPLIER: 0.05,
+  // 随机浮动范围（±20%）
+  RANDOM_VARIANCE: 0.2,
+  // 警告阈值（低于10%时显示警告）
+  WARNING_THRESHOLD: 0.1,
+  // 产量衰减开始阈值（低于5%时产量开始衰减）
+  DECAY_START_THRESHOLD: 0.05
+}
+
+// 探险区域配置
+export const EXPEDITION_ZONES: Record<ExpeditionZone, ExpeditionZoneConfig> = {
+  [ExpeditionZone.NearSpace]: {
+    id: ExpeditionZone.NearSpace,
+    requiredTechLevel: 0, // 无需求
+    flightTimeMultiplier: 1.0,
+    resourceMultiplier: 1.0,
+    darkMatterMultiplier: 1.0,
+    fleetFindMultiplier: 1.0,
+    dangerMultiplier: 0.5, // 低危险
+    probabilities: {
+      resources: 35, // 高概率发现资源
+      darkMatter: 8,
+      fleet: 10,
+      pirates: 7, // 低海盗
+      aliens: 5, // 低外星人
+      nothing: 35 // 高概率什么都没发现
+    }
+  },
+  [ExpeditionZone.DeepSpace]: {
+    id: ExpeditionZone.DeepSpace,
+    requiredTechLevel: 4, // 需要天体物理学4级
+    flightTimeMultiplier: 1.5,
+    resourceMultiplier: 1.5,
+    darkMatterMultiplier: 1.5,
+    fleetFindMultiplier: 1.5,
+    dangerMultiplier: 1.0, // 标准危险
+    probabilities: {
+      resources: 30,
+      darkMatter: 10,
+      fleet: 15,
+      pirates: 15,
+      aliens: 10,
+      nothing: 20
+    }
+  },
+  [ExpeditionZone.UnchartedSpace]: {
+    id: ExpeditionZone.UnchartedSpace,
+    requiredTechLevel: 8, // 需要天体物理学8级
+    flightTimeMultiplier: 2.0,
+    resourceMultiplier: 2.5,
+    darkMatterMultiplier: 2.0,
+    fleetFindMultiplier: 2.0,
+    dangerMultiplier: 1.5, // 高危险
+    probabilities: {
+      resources: 25,
+      darkMatter: 12,
+      fleet: 18,
+      pirates: 18,
+      aliens: 15,
+      nothing: 12
+    }
+  },
+  [ExpeditionZone.DangerousNebula]: {
+    id: ExpeditionZone.DangerousNebula,
+    requiredTechLevel: 12, // 需要天体物理学12级
+    flightTimeMultiplier: 3.0,
+    resourceMultiplier: 4.0,
+    darkMatterMultiplier: 3.0,
+    fleetFindMultiplier: 3.0,
+    dangerMultiplier: 2.5, // 极高危险
+    probabilities: {
+      resources: 20,
+      darkMatter: 15,
+      fleet: 20,
+      pirates: 20,
+      aliens: 20,
+      nothing: 5 // 很少什么都没发现
+    }
   }
 }

@@ -45,10 +45,13 @@ export default {
     requirementsNotMet: 'Anforderungen nicht erfüllt',
     current: 'Aktuell',
     level: 'Stufe',
+    to: 'bis',
     gmModeActivated: 'GM-Modus aktiviert! Überprüfen Sie das Navigationsmenü.',
     view: 'Anzeigen',
+    viewDetails: 'Details anzeigen',
     exitConfirmTitle: 'Spiel beenden',
-    exitConfirmMessage: 'Möchten Sie das Spiel wirklich beenden? Ihr Fortschritt wird automatisch gespeichert.'
+    exitConfirmMessage: 'Möchten Sie das Spiel wirklich beenden? Ihr Fortschritt wird automatisch gespeichert.',
+    points: 'Punkte'
   },
   errors: {
     requirementsNotMet: 'Anforderungen nicht erfüllt',
@@ -85,6 +88,7 @@ export default {
     galaxy: 'Galaxie',
     diplomacy: 'Diplomatie',
     achievements: 'Erfolge',
+    ranking: 'Rangliste',
     messages: 'Nachrichten',
     settings: 'Einstellungen',
     gm: 'GM'
@@ -110,7 +114,8 @@ export default {
     perHour: 'Stunde',
     perMinute: 'Min',
     hour: 'Stunde',
-    noEnergy: 'Keine Energie'
+    noEnergy: 'Keine Energie',
+    temperatureBonus: 'Temperaturbonus'
   },
   energy: {
     lowWarning: 'Energiedefizit! Ressourcenproduktion gestoppt!',
@@ -119,6 +124,12 @@ export default {
     noProduction: 'Energiedefizit! Ressourcenproduktion gestoppt!',
     deficitDetail: 'Energiedefizit: {deficit}, bauen Sie mehr Kraftwerke',
     buildSolarPlant: 'Kraftwerk bauen'
+  },
+  oreDeposit: {
+    lowWarning: 'Erzvorkommen gehen zur Neige!',
+    depletedWarning: 'Erzvorkommen erschöpft!',
+    depletedResources: 'Erschöpft: {resources}',
+    lowResources: 'Fast erschöpft: {resources}'
   },
   planet: {
     planet: 'Planet',
@@ -186,12 +197,20 @@ export default {
     researchSpeedBonus: 'Forschungsgeschwindigkeitsbonus',
     planetSpace: 'Planet Space',
     moonSpace: 'Moon Space',
-    missileCapacity: 'Missile Capacity'
+    missileCapacity: 'Missile Capacity',
+
+    // Erzvorkommen
+    oreDeposit: 'Erzvorkommen',
+    remainingDeposit: 'Verbleibend',
+    depletionTime: 'Erschöpfung',
+    depositDepleted: 'Erschöpft',
+    depositWarning: 'Warnung: Erzvorkommen sind fast erschöpft (unter 10%)!',
+    depositDepletedMessage: 'Erzvorkommen sind erschöpft. Produktion gestoppt.'
   },
   buildingDescriptions: {
     metalMine: 'Fördert Metallressourcen',
     crystalMine: 'Fördert Kristallressourcen',
-    deuteriumSynthesizer: 'Synthesiert Deuteriumressourcen',
+    deuteriumSynthesizer: 'Synthesiert Deuterium (höhere Produktion bei niedrigen Temperaturen)',
     solarPlant: 'Liefert Energie',
     fusionReactor: 'Nutzt Deuterium zur Erzeugung großer Energiemengen',
     roboticsFactory: 'Beschleunigt Baugeschwindigkeit',
@@ -241,7 +260,7 @@ export default {
     colonyShip: 'Zur Kolonisierung neuer Planeten',
     recycler: 'Sammelt Trümmerfeld-Ressourcen',
     espionageProbe: 'Späht feindliche Planeten aus',
-    solarSatellite: 'Liefert zusätzliche Energie, erzeugt 50 Energie pro Satellit',
+    solarSatellite: 'Liefert zusätzliche Energie, Leistung abhängig von Planetentemperatur (höher bei Hitze)',
     darkMatterHarvester: 'Spezielles Schiff zum Ernten von Dunkler Materie',
     deathstar: 'Ultimative Waffe, die ganze Planeten zerstören kann'
   },
@@ -366,8 +385,16 @@ export default {
       buildings: 'Gebäude',
       research: 'Forschung',
       ships: 'Schiffe',
-      defense: 'Verteidigung'
-    }
+      defense: 'Verteidigung',
+      waiting: 'Warten'
+    },
+    waitingEmpty: 'Keine wartenden Aufgaben',
+    addToWaiting: 'Zur Warteschlange hinzufügen',
+    remove: 'Entfernen',
+    resourcesReady: 'Bereit',
+    waitingResources: 'Warten',
+    waitingQueueFull: 'Warteschlange ist voll',
+    movedToQueue: 'Aufgabe in Warteschlange verschoben'
   },
   overview: {
     title: 'Planetenübersicht',
@@ -380,7 +407,10 @@ export default {
     consumptionSourcesDesc: 'Energieverbrauchsdetails für Gebäude',
     totalProduction: 'Gesamtproduktion',
     totalConsumption: 'Gesamtverbrauch',
-    noConsumption: 'Kein Energieverbrauch'
+    noConsumption: 'Kein Energieverbrauch',
+    tabOverview: 'Übersicht',
+    tabProduction: 'Produktionsdetails',
+    tabConsumption: 'Verbrauchsdetails'
   },
   buildingsView: {
     title: 'Gebäude',
@@ -514,6 +544,29 @@ export default {
     spy: 'Spionage',
     deploy: 'Stationieren',
     expedition: 'Expedition',
+    expeditionZone: 'Expeditionszone',
+    expeditionZoneDesc: 'Wähle das Zielgebiet. Verschiedene Zonen haben unterschiedliche Risiken und Belohnungen',
+    requiresAstro: 'Benötigt Astrophysik Stufe {level}',
+    reward: 'Belohnung',
+    danger: 'Gefahr',
+    zones: {
+      nearSpace: {
+        name: 'Naher Weltraum',
+        desc: 'Sicherer naher Weltraum, geringes Risiko aber weniger Belohnungen'
+      },
+      deepSpace: {
+        name: 'Tiefer Weltraum',
+        desc: 'Weit von Sternen entfernt, mehr Ressourcen können gefunden werden'
+      },
+      unchartedSpace: {
+        name: 'Unerforschter Raum',
+        desc: 'Unerforschtes Gebiet, hohes Risiko hohe Belohnung'
+      },
+      dangerousNebula: {
+        name: 'Gefährlicher Nebel',
+        desc: 'Nebel voller unbekannter Gefahren, enthält aber extrem reiche Schätze'
+      }
+    },
     recycle: 'Recyceln',
     transportResources: 'Ressourcen transportieren',
     totalCargoCapacity: 'Gesamtladekapazität',
@@ -568,7 +621,24 @@ export default {
     presetName: 'Vorlagenname',
     presetNamePlaceholder: 'Vorlagennamen eingeben',
     deletePresetTitle: 'Vorlage löschen',
-    deletePresetMessage: 'Vorlage "{name}" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.'
+    deletePresetMessage: 'Vorlage "{name}" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+    // Sprungtor
+    jumpGate: 'Sprungtor',
+    jumpGateDescription: 'Nutze das Sprungtor, um Flotten sofort zu einem anderen Mond mit Sprungtor zu transferieren',
+    jumpGateNotAvailable: 'Sprungtor nicht verfügbar',
+    jumpGateRequiresMoon: 'Sprungtor kann nur auf Monden verwendet werden',
+    jumpGateNotBuilt: 'Aktueller Mond hat kein Sprungtor',
+    jumpGateCooldown: 'Sprungtor kühlt ab',
+    jumpGateCooldownRemaining: 'Verbleibende Abklingzeit',
+    jumpGateReady: 'Sprungtor bereit',
+    jumpGateSelectTarget: 'Zielmond auswählen',
+    jumpGateNoTargetMoons: 'Keine verfügbaren Zielmonde (erfordert Sprungtor und abgeschlossene Abklingzeit)',
+    jumpGateSelectFleet: 'Flotte zum Transfer auswählen',
+    jumpGateTransfer: 'Flotte transferieren',
+    jumpGateSuccess: 'Sprungtor-Transfer erfolgreich',
+    jumpGateSuccessMessage: 'Flotte wurde sofort nach {target} transferiert',
+    jumpGateFailed: 'Sprungtor-Transfer fehlgeschlagen',
+    jumpGateFailedMessage: 'Bitte überprüfe den Sprungtor-Status und die Flottenkonfiguration'
   },
   officersView: {
     title: 'Offiziere',
@@ -627,6 +697,8 @@ export default {
     switch: 'Wechseln',
     recycle: 'Recyceln',
     debrisField: 'Trümmerfeld',
+    oreDeposits: 'Erzvorkommen',
+    deposits: 'Vorkommen',
     scoutPlanetTitle: 'Planet ausspionieren',
     attackPlanetTitle: 'Planet angreifen',
     missileAttackTitle: 'Raketenangriff',
@@ -654,7 +726,9 @@ export default {
     giftPlanetTitle: 'Geschenk senden',
     giftPlanetMessage:
       'Möchten Sie wirklich Ressourcen als Geschenk an Planet [{coordinates}] senden?\n\nBitte gehen Sie zur Flottenseite, um Transporter auszuwählen und Ressourcen zu laden.',
-    npcPlanetName: '{name}s Planet'
+    npcPlanetName: '{name}s Planet',
+    intercepted: 'Abgefangen',
+    defenseLosses: 'Verteidigungsverluste'
   },
   messagesView: {
     title: 'Nachrichten',
@@ -683,6 +757,8 @@ export default {
     attackerLosses: 'Angreiferverluste',
     defenderLosses: 'Verteidigerverluste',
     noLosses: 'Keine Verluste',
+    losses: 'Verluste',
+    remainingUnits: 'Verbleibende Einheiten',
     plunder: 'Beute',
     debrisField: 'Trümmerfeld',
     resources: 'Ressourcen',
@@ -700,6 +776,18 @@ export default {
     round: 'Runde {round}',
     attackerRemainingPower: 'Verbleibende Angreiferkraft',
     defenderRemainingPower: 'Verbleibende Verteidigerkraft',
+    // Kampfanimation
+    playAnimation: 'Animation abspielen',
+    showDetails: 'Details anzeigen',
+    speed: 'Geschwindigkeit',
+    power: 'Kampfkraft',
+    battleLogEmpty: 'Kampfprotokoll ist leer',
+    roundStarted: 'Runde {round} gestartet',
+    shipDestroyed: '{count} {ship} zerstört',
+    defenseDestroyed: '{count} {defense} zerstört',
+    attackerWins: 'Angreifer gewinnt',
+    defenderWins: 'Verteidiger gewinnt',
+    roundsPlayed: 'Runden gespielt',
     missions: 'Missionen',
     noMissionReports: 'Keine Missionsberichte',
     success: 'Erfolg',
@@ -774,7 +862,8 @@ export default {
     colonizeSuccess: 'Kolonisierungsmission erfolgreich, neuer Planet gegründet',
     colonizeFailed: 'Kolonisierungsmission fehlgeschlagen',
     colonizeFailedOccupied: 'Kolonisierung fehlgeschlagen: Zielposition ist bereits von einem anderen Planeten besetzt',
-    colonizeFailedMaxColonies: 'Kolonisierung fehlgeschlagen: Maximale Anzahl an Kolonien erreicht. Forsche Astrophysik, um das Limit zu erhöhen.',
+    colonizeFailedMaxColonies:
+      'Kolonisierung fehlgeschlagen: Maximale Anzahl an Kolonien erreicht. Forsche Astrophysik, um das Limit zu erhöhen.',
     spySuccess: 'Spionagemission erfolgreich abgeschlossen',
     spyFailed: 'Spionagemission fehlgeschlagen',
     spyFailedTargetNotFound: 'Spionage fehlgeschlagen: Zielplanet existiert nicht',
@@ -905,6 +994,7 @@ export default {
     inAppNotifications: 'In-App-Benachrichtigungen',
     constructionComplete: 'Bau abgeschlossen',
     researchComplete: 'Forschung abgeschlossen',
+    unlockNotification: 'Freischaltungsbenachrichtigung',
     browserPermission: 'Browser-Benachrichtigungen aktivieren',
     permissionGranted: 'Erlaubnis erteilt',
     permissionDenied: 'Erlaubnis verweigert/nicht erteilt',
@@ -912,11 +1002,22 @@ export default {
     notificationsDisabled: 'Aktivieren Sie einen der obigen Schalter, um spezifische Benachrichtigungen zu konfigurieren',
     suppressInFocus: 'Browser-Benachrichtigungen unterdrücken, wenn Seite fokussiert ist',
     expandTypes: 'Details anzeigen',
-    collapseTypes: 'Details ausblenden'
+    collapseTypes: 'Details ausblenden',
+    // NPC-Namen-Update
+    npcNameUpdate: 'NPC-Namen-Update',
+    npcNameUpdateTitle: 'Alte NPC-Namen erkannt',
+    npcNameUpdateMessage: '{count} NPCs mit altem Namensformat gefunden. Möchten Sie auf neue lokalisierte Namen aktualisieren?',
+    npcNameUpdateConfirm: 'Namen aktualisieren',
+    npcNameUpdateCancel: 'Beibehalten',
+    npcNameUpdateSuccess: '{count} NPC-Namen erfolgreich aktualisiert',
+    npcNameUpdateSkipped: 'NPC-Namen-Update übersprungen'
   },
   notifications: {
     constructionComplete: 'Bau abgeschlossen',
-    researchComplete: 'Forschung abgeschlossen'
+    researchComplete: 'Forschung abgeschlossen',
+    newUnlock: 'Neuer Inhalt freigeschaltet',
+    building: 'Gebäude',
+    technology: 'Technologie'
   },
   gmView: {
     title: 'GM-Kontrollpanel',
@@ -1152,6 +1253,21 @@ export default {
         attackCooldown: 'Angriff auf Abklingzeit ({min}m {sec}s)',
         notSpiedYet: 'Noch nicht spioniert, zuerst Spionage nötig'
       }
+    },
+    aiType: 'KI-Typ',
+    aiTypes: {
+      aggressive: 'Aggressiv',
+      defensive: 'Defensiv',
+      trader: 'Händler',
+      expansionist: 'Expansionist',
+      balanced: 'Ausgewogen'
+    },
+    aiTypeDescriptions: {
+      aggressive: 'Spioniert und greift aktiv an, starke Vergeltung',
+      defensive: 'Greift selten an, starke Vergeltung bei Angriff',
+      trader: 'Greift fast nie an, bevorzugt Handel und Geschenke',
+      expansionist: 'Konzentriert auf Entwicklung, weniger aggressiv',
+      balanced: 'Passt Strategie dynamisch an die Situation an'
     }
   },
   pagination: {
@@ -1313,7 +1429,8 @@ export default {
     },
     achievements: {
       title: 'Erfolgssystem',
-      message: 'Schließen Sie Spielziele ab, um Erfolge freizuschalten und Dunkle Materie-Belohnungen zu erhalten! Erfolge haben mehrere Stufen - streben Sie höhere Herausforderungen an, um bessere Belohnungen zu erhalten.'
+      message:
+        'Schließen Sie Spielziele ab, um Erfolge freizuschalten und Dunkle Materie-Belohnungen zu erhalten! Erfolge haben mehrere Stufen - streben Sie höhere Herausforderungen an, um bessere Belohnungen zu erhalten.'
     },
     settings: {
       title: 'Einstellungen',
@@ -1421,5 +1538,24 @@ export default {
       robbed: 'Von NPC gesammelte Trümmer',
       lostToNPC: 'An NPC verlorene Trümmerressourcen'
     }
+  },
+  ranking: {
+    title: 'Rangliste',
+    totalPlayers: '{count} Spieler',
+    yourRanking: 'Deine Platzierung',
+    categories: {
+      total: 'Gesamt',
+      building: 'Gebäude',
+      research: 'Forschung',
+      fleet: 'Flotte',
+      defense: 'Verteidigung'
+    },
+    points: 'Pkt',
+    name: 'Name',
+    planets: 'Planeten',
+    details: 'Details',
+    you: 'Du',
+    scoreBreakdown: 'Punkteübersicht',
+    noData: 'Keine Ranglistendaten'
   }
 }

@@ -7,7 +7,7 @@
 
     <!-- 标签切换 -->
     <Tabs v-model="activeTab" class="w-full">
-      <TabsList :class="['grid', 'w-full', showJumpGateTab ? 'grid-cols-4' : 'grid-cols-3']">
+      <TabsList :class="['grid', 'w-full', showJumpGateTab ? 'grid-cols-3' : 'grid-cols-2']">
         <TabsTrigger v-for="tab in visibleTabs" :key="tab.value" :value="tab.value">
           {{ t(`fleetView.${tab.labelKey}`) }}
           <Badge v-if="tab.value === 'missions' && gameStore.player.fleetMissions.length > 0" variant="destructive" class="ml-1">
@@ -16,37 +16,6 @@
           <Badge v-if="tab.value === 'jumpGate' && jumpGateReady" variant="default" class="ml-1">✓</Badge>
         </TabsTrigger>
       </TabsList>
-
-      <!-- 舰队总览 -->
-      <TabsContent value="fleet" class="mt-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>{{ t('fleetView.currentPlanetFleet') }}</CardTitle>
-            <CardDescription>
-              {{ planet.name }} [{{ planet.position.galaxy }}:{{ planet.position.system }}:{{ planet.position.position }}]
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-              <div v-for="(count, shipType) in planet.fleet" :key="shipType" class="p-3 sm:p-4 border rounded-lg space-y-2">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <h3 class="font-semibold text-sm sm:text-base">{{ SHIPS[shipType].name }}</h3>
-                    <p class="text-xl sm:text-2xl font-bold">{{ formatNumber(count) }}</p>
-                  </div>
-                </div>
-                <div class="text-xs sm:text-sm text-muted-foreground space-y-1">
-                  <p>{{ t('fleetView.attack') }}: {{ SHIPS[shipType].attack }}</p>
-                  <p>{{ t('fleetView.shield') }}: {{ SHIPS[shipType].shield }}</p>
-                  <p>{{ t('fleetView.armor') }}: {{ SHIPS[shipType].armor }}</p>
-                  <p>{{ t('fleetView.speed') }}: {{ formatNumber(SHIPS[shipType].speed) }}</p>
-                  <p>{{ t('fleetView.cargo') }}: {{ formatNumber(SHIPS[shipType].cargoCapacity) }}</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
 
       <!-- 派遣舰队 -->
       <TabsContent value="send" class="mt-4 space-y-4">
@@ -213,6 +182,47 @@
           </CardContent>
         </Card>
 
+        <!-- 探险区域选择（仅探险任务） -->
+        <Card v-if="selectedMission === MissionType.Expedition">
+          <CardHeader>
+            <CardTitle>{{ t('fleetView.expeditionZone') }}</CardTitle>
+            <CardDescription>{{ t('fleetView.expeditionZoneDesc') }}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Button
+                v-for="item in availableExpeditionZones"
+                :key="item.zone"
+                @click="item.unlocked && (selectedExpeditionZone = item.zone)"
+                variant="outline"
+                :disabled="!item.unlocked"
+                :class="[
+                  'h-auto py-3 flex flex-col items-start text-left',
+                  selectedExpeditionZone === item.zone ? 'ring-2 ring-primary' : ''
+                ]"
+              >
+                <div class="flex items-center gap-2 w-full">
+                  <span class="font-medium">{{ t(`fleetView.zones.${item.zone}.name`) }}</span>
+                  <Badge v-if="!item.unlocked" variant="secondary" class="ml-auto text-xs">
+                    {{ t('fleetView.requiresAstro', { level: item.config.requiredTechLevel }) }}
+                  </Badge>
+                </div>
+                <div class="text-xs text-muted-foreground mt-1">
+                  {{ t(`fleetView.zones.${item.zone}.desc`) }}
+                </div>
+                <div class="flex gap-3 mt-2 text-xs">
+                  <span :class="item.config.resourceMultiplier > 1 ? 'text-green-500' : ''">
+                    {{ t('fleetView.reward') }}: x{{ item.config.resourceMultiplier }}
+                  </span>
+                  <span :class="item.config.dangerMultiplier > 1 ? 'text-red-500' : 'text-green-500'">
+                    {{ t('fleetView.danger') }}: x{{ item.config.dangerMultiplier }}
+                  </span>
+                </div>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         <!-- 运输资源（仅运输任务） -->
         <Card v-if="selectedMission === MissionType.Transport">
           <CardHeader>
@@ -298,7 +308,12 @@
           <CardHeader>
             <div class="flex justify-between items-start">
               <div>
-                <CardTitle class="text-base sm:text-lg">{{ getMissionName(mission.missionType) }}</CardTitle>
+                <CardTitle class="text-base sm:text-lg flex items-center gap-2">
+                  {{ getMissionName(mission.missionType) }}
+                  <Badge v-if="mission.missionType === MissionType.Expedition && mission.expeditionZone" variant="outline" class="text-xs">
+                    {{ t(`fleetView.zones.${mission.expeditionZone}.name`) }}
+                  </Badge>
+                </CardTitle>
                 <CardDescription class="text-xs sm:text-sm">
                   {{ getPlanetName(mission.originPlanetId) }} → [{{ mission.targetPosition.galaxy }}:{{ mission.targetPosition.system }}:{{
                     mission.targetPosition.position
@@ -510,7 +525,12 @@
         </div>
         <AlertDialogFooter>
           <AlertDialogCancel
-            @click="() => { showPresetNameDialog = false; pendingPresetAction = null }"
+            @click="
+              () => {
+                showPresetNameDialog = false
+                pendingPresetAction = null
+              }
+            "
           >
             {{ t('common.cancel') }}
           </AlertDialogCancel>
@@ -531,8 +551,9 @@
   import { useGameConfig } from '@/composables/useGameConfig'
   import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
   import { useRoute } from 'vue-router'
-  import { ShipType, MissionType, BuildingType, TechnologyType } from '@/types/game'
+  import { ShipType, MissionType, BuildingType, TechnologyType, ExpeditionZone } from '@/types/game'
   import type { Fleet, Resources, FleetPreset } from '@/types/game'
+  import { EXPEDITION_ZONES } from '@/config/gameConfig'
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
   import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
   import { Button } from '@/components/ui/button'
@@ -541,7 +562,7 @@
   import { Badge } from '@/components/ui/badge'
   import { Progress } from '@/components/ui/progress'
   import { Checkbox } from '@/components/ui/checkbox'
-  import ResourceIcon from '@/components/ResourceIcon.vue'
+  import ResourceIcon from '@/components/common/ResourceIcon.vue'
   import {
     AlertDialog,
     AlertDialogAction,
@@ -552,7 +573,7 @@
     AlertDialogHeader,
     AlertDialogTitle
   } from '@/components/ui/alert-dialog'
-  import UnlockRequirement from '@/components/UnlockRequirement.vue'
+  import UnlockRequirement from '@/components/common/UnlockRequirement.vue'
   import { Empty, EmptyContent, EmptyDescription } from '@/components/ui/empty'
   import {
     Sword,
@@ -610,11 +631,10 @@
     return publicLogic.getMaxFleetMissions(bonuses.additionalFleetSlots, computerTechLevel)
   })
 
-  const activeTab = ref<'fleet' | 'send' | 'missions' | 'jumpGate'>('fleet')
+  const activeTab = ref<'send' | 'missions' | 'jumpGate'>('send')
 
   // Tab 配置
   const fleetTabs = [
-    { value: 'fleet', labelKey: 'fleetOverview' },
     { value: 'send', labelKey: 'sendFleet' },
     { value: 'missions', labelKey: 'flightMissions' },
     { value: 'jumpGate', labelKey: 'jumpGate' }
@@ -772,6 +792,23 @@
 
   // 选择的任务类型
   const selectedMission = ref<MissionType>(MissionType.Attack)
+
+  // 探险区域选择
+  const selectedExpeditionZone = ref<ExpeditionZone>(ExpeditionZone.NearSpace)
+
+  // 获取玩家的天体物理学等级
+  const astrophysicsLevel = computed(() => {
+    return gameStore.player.technologies[TechnologyType.Astrophysics] || 0
+  })
+
+  // 可用的探险区域（基于天体物理学等级）
+  const availableExpeditionZones = computed(() => {
+    return Object.values(ExpeditionZone).map(zone => ({
+      zone,
+      config: EXPEDITION_ZONES[zone],
+      unlocked: astrophysicsLevel.value >= EXPEDITION_ZONES[zone].requiredTechLevel
+    }))
+  })
 
   // 运输资源
   const cargo = ref({ metal: 0, crystal: 0, deuterium: 0, darkMatter: 0, energy: 0 })
@@ -1127,7 +1164,15 @@
     const distance = fleetLogic.calculateDistance(planet.value.position, targetPosition.value)
     const bonuses = officerLogic.calculateActiveBonuses(gameStore.player.officers, Date.now())
     const minSpeed = shipLogic.calculateFleetMinSpeed(selectedFleet.value, bonuses.fleetSpeedBonus)
-    return fleetLogic.calculateFlightTime(distance, minSpeed)
+    let flightTime = fleetLogic.calculateFlightTime(distance, minSpeed)
+
+    // 探险任务应用区域飞行时间倍率
+    if (selectedMission.value === MissionType.Expedition) {
+      const zoneConfig = EXPEDITION_ZONES[selectedExpeditionZone.value]
+      flightTime = Math.floor(flightTime * zoneConfig.flightTimeMultiplier)
+    }
+
+    return flightTime
   }
 
   // 检查是否可以派遣
@@ -1219,7 +1264,14 @@
     const distance = fleetLogic.calculateDistance(gameStore.currentPlanet.position, targetPosition)
     const bonuses = officerLogic.calculateActiveBonuses(gameStore.player.officers, Date.now())
     const minSpeed = shipLogic.calculateFleetMinSpeed(fleet, bonuses.fleetSpeedBonus)
-    const flightTime = fleetLogic.calculateFlightTime(distance, minSpeed)
+    let flightTime = fleetLogic.calculateFlightTime(distance, minSpeed)
+
+    // 探险任务应用区域飞行时间倍率
+    if (missionType === MissionType.Expedition) {
+      const zoneConfig = EXPEDITION_ZONES[selectedExpeditionZone.value]
+      flightTime = Math.floor(flightTime * zoneConfig.flightTimeMultiplier)
+    }
+
     const mission = fleetLogic.createFleetMission(
       gameStore.player.id,
       gameStore.currentPlanet.id,
@@ -1239,6 +1291,11 @@
     if (missionType === MissionType.Transport && isGiftMode.value && targetNpc.value) {
       mission.isGift = true
       mission.giftTargetNpcId = targetNpc.value.id
+    }
+
+    // 如果是探险任务，设置探险区域
+    if (missionType === MissionType.Expedition) {
+      mission.expeditionZone = selectedExpeditionZone.value
     }
 
     gameStore.player.fleetMissions.push(mission)

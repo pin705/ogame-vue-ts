@@ -5,13 +5,28 @@
 
   A modern of the classic OGame space strategy game, built with Vue 3 and TypeScript.
 
+  [![GitHub Release](https://img.shields.io/github/v/release/setube/ogame-vue-ts?style=flat&logo=github&label=Release)](https://github.com/setube/ogame-vue-ts/releases/latest)
   [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
   [![Vue 3](https://img.shields.io/badge/Vue-3.5-brightgreen.svg)](https://vuejs.org/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
   [![Vite](https://img.shields.io/badge/Vite-7.2-646CFF.svg)](https://vitejs.dev/)
-  [![Go](https://img.shields.io/badge/Go-1.25-79D4FD.svg)](https://golang.org/)
+  [![Go](https://img.shields.io/badge/Go-1.23-79D4FD.svg)](https://golang.org/)
 
-  [简体中文](README.md) | English
+  **Downloads:**
+  [![Android x86_64](https://img.shields.io/badge/Android-x86__64-3DDC84?logo=android&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-x86_64.APK)
+  [![Android arm64](https://img.shields.io/badge/Android-arm64--v8a-3DDC84?logo=android&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-arm64-v8a.APK)
+  [![Android armv7](https://img.shields.io/badge/Android-armeabi--v7a-3DDC84?logo=android&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-armeabi-v7a.APK)
+
+  [![Windows Server](https://img.shields.io/badge/Server-Windows-0078D6?logo=windows&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/ogame-server-win.exe)
+  [![Linux](https://img.shields.io/badge/Server-Linux%20amd64-FCC624?logo=linux&logoColor=black)](https://github.com/setube/ogame-vue-ts/releases/latest/download/ogame-server-linux)
+  [![Linux arm64](https://img.shields.io/badge/Server-Linux%20amd64-FCC624?logo=linux&logoColor=black)](https://github.com/setube/ogame-vue-ts/releases/latest/download/ogame-server-linux-arm64)
+  [![macOS](https://img.shields.io/badge/Server-macOS%20ARM-000000?logo=apple&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-mac.dmg)
+
+  [![Windows Desktop](https://img.shields.io/badge/Desktop-Windows-0078D6?logo=windows&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-Setup.exe)
+  [![Ubuntu Desktop](https://img.shields.io/badge/Desktop-Ubuntu-E95420?logo=ubuntu&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-linux.AppImage)
+  [![macOS Desktop](https://img.shields.io/badge/Desktop-macOS-000000?logo=apple&logoColor=white)](https://github.com/setube/ogame-vue-ts/releases/latest/download/OGame-mac.dmg)
+
+  [简体中文](README.md) | English | [繁體中文](README-zh-TW.md) | [Deutsch](README-DE.md) | [Русский](README-RU.md) | [한국어](README-KO.md)
 
 </div>
 
@@ -48,28 +63,6 @@ OGame Vue TS is a single-player, browser-based space strategy game inspired by t
 - **Internationalization:** Custom i18n implementation
 
 ## Quick Start
-
-### Download Build Product
-
-#### Server version
-
-[Windows](/releases/latest/download/ogame-windows-amd64.exe)
-
-[Linux amd64](/releases/latest/download/ogame-linux-amd64)
-
-[Linux arm64](/releases/latest/download/ogame-linux-arm64)
-
-[MacOS Intel](/releases/latest/download/ogame-macos-amd64)
-
-[MacOS](/releases/latest/download/ogame-macos-arm64)
-
-#### Desktop version
-
-[Windows](/releases/latest/download/OGame.Setup.exe)
-
-[Ubuntu](/releases/latest/download/OGame.AppImage)
-
-[MacOS](/releases/latest/download/OGame-mac.dmg)
 
 ### Prerequisites
 
@@ -111,12 +104,12 @@ pnpm preview
 
 ## Available Languages
 
-- 🇺🇸 English
-- 🇨🇳 简体中文 (Simplified Chinese)
-- 🇹🇼 繁體中文 (Traditional Chinese)
-- 🇩🇪 Deutsch (German)
-- 🇷🇺 Русский (Russian)
-- 🇰🇷 한국어 (Korean)
+- 简体中文 (Simplified Chinese)
+- 繁體中文 (Traditional Chinese)
+- English
+- Deutsch (German)
+- Русский (Russian)
+- 한국어 (Korean)
 
 ## Game Features
 
@@ -187,7 +180,7 @@ This project is not affiliated with, endorsed by, or connected to Gameforge AG o
 ---
 
 <div align="center">
-  Made with ❤️ by Jun Qian
+  Made with ❤️ by <a href="https://github.com/setube">setube</a>
   <br>
   © 2025 - All rights reserved (except those granted by CC BY-NC 4.0 License)
 </div>
