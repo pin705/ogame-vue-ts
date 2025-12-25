@@ -1,10 +1,21 @@
-import { computed } from 'vue'
-import { locales, type Locale } from '~/locales'
+import { ref, computed } from 'vue'
+import { locales, localeNames, detectBrowserLocale, type Locale } from '~/locales'
+
+// Global reactive locale state
+const currentLocale = ref<Locale>('en')
+let initialized = false
 
 export const useI18n = () => {
-  const gameStore = useGameStore()
-
-  const currentLocale = computed(() => gameStore.locale)
+  // Initialize locale from localStorage or browser detection (only once)
+  if (!initialized && import.meta.client) {
+    const savedLocale = localStorage.getItem('ogame-locale') as Locale | null
+    if (savedLocale && savedLocale in locales) {
+      currentLocale.value = savedLocale
+    } else {
+      currentLocale.value = detectBrowserLocale()
+    }
+    initialized = true
+  }
 
   const messages = computed(() => locales[currentLocale.value])
 
@@ -34,14 +45,19 @@ export const useI18n = () => {
   }
 
   const setLocale = (locale: Locale) => {
-    gameStore.locale = locale
+    currentLocale.value = locale
+    if (import.meta.client) {
+      localStorage.setItem('ogame-locale', locale)
+    }
   }
 
   return {
     t,
     locale: currentLocale,
     setLocale,
-    messages
+    messages,
+    localeNames,
+    availableLocales: Object.keys(locales) as Locale[]
   }
 }
 

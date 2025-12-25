@@ -1,7 +1,66 @@
 @import "tailwindcss";
 
+/* Theme configuration for Tailwind CSS v4 */
+@theme {
+  --color-border: oklch(0.92 0.004 286.32);
+  --color-input: oklch(0.92 0.004 286.32);
+  --color-ring: oklch(0.705 0.015 286.067);
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.141 0.005 285.823);
+  
+  --color-primary: oklch(0.21 0.006 285.885);
+  --color-primary-foreground: oklch(0.985 0 0);
+  
+  --color-secondary: oklch(0.967 0.001 286.375);
+  --color-secondary-foreground: oklch(0.21 0.006 285.885);
+  
+  --color-muted: oklch(0.967 0.001 286.375);
+  --color-muted-foreground: oklch(0.552 0.016 285.938);
+  
+  --color-accent: oklch(0.967 0.001 286.375);
+  --color-accent-foreground: oklch(0.21 0.006 285.885);
+  
+  --color-destructive: oklch(0.577 0.245 27.325);
+  --color-destructive-foreground: oklch(0.577 0.245 27.325);
+  
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.141 0.005 285.823);
+  
+  --color-popover: oklch(1 0 0);
+  --color-popover-foreground: oklch(0.141 0.005 285.823);
+  
+  --color-sidebar: oklch(0.985 0 0);
+  --color-sidebar-foreground: oklch(0.141 0.005 285.823);
+  --color-sidebar-primary: oklch(0.21 0.006 285.885);
+  --color-sidebar-primary-foreground: oklch(0.985 0 0);
+  --color-sidebar-accent: oklch(0.967 0.001 286.375);
+  --color-sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+  --color-sidebar-border: oklch(0.92 0.004 286.32);
+  --color-sidebar-ring: oklch(0.705 0.015 286.067);
+  
+  --radius-lg: 0.625rem;
+  --radius-md: 0.5rem;
+  --radius-sm: 0.375rem;
+  
+  /* Animations for reka-ui */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--reka-accordion-content-height); }
+  }
+  
+  @keyframes accordion-up {
+    from { height: var(--reka-accordion-content-height); }
+    to { height: 0; }
+  }
+}
+
+/* Custom variant for dark mode */
 @custom-variant dark (&:is(.dark *));
 
+/* CSS Variables for hsl() fallback compatibility */
 :root {
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -23,6 +82,15 @@
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
+  
+  --sidebar-background: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-primary: oklch(0.21 0.006 285.885);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.967 0.001 286.375);
+  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-ring: oklch(0.705 0.015 286.067);
 }
 
 .dark {
@@ -45,18 +113,138 @@
   --border: oklch(0.274 0.006 286.033);
   --input: oklch(0.274 0.006 286.033);
   --ring: oklch(0.442 0.017 285.786);
+  
+  --sidebar-background: oklch(0.18 0.005 285.823);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.985 0 0);
+  --sidebar-primary-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.274 0.006 286.033);
+  --sidebar-ring: oklch(0.442 0.017 285.786);
 }
 
-/* Theme variables are defined in style.css */
+/* Utility classes using CSS variables */
+@utility bg-background {
+  background-color: var(--background);
+}
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
+@utility bg-foreground {
+  background-color: var(--foreground);
+}
 
-  body {
-    @apply bg-background text-foreground;
-  }
+@utility bg-card {
+  background-color: var(--card);
+}
+
+@utility bg-primary {
+  background-color: var(--primary);
+}
+
+@utility bg-secondary {
+  background-color: var(--secondary);
+}
+
+@utility bg-muted {
+  background-color: var(--muted);
+}
+
+@utility bg-accent {
+  background-color: var(--accent);
+}
+
+@utility bg-destructive {
+  background-color: var(--destructive);
+}
+
+@utility bg-popover {
+  background-color: var(--popover);
+}
+
+@utility bg-sidebar {
+  background-color: var(--sidebar-background);
+}
+
+@utility text-foreground {
+  color: var(--foreground);
+}
+
+@utility text-muted-foreground {
+  color: var(--muted-foreground);
+}
+
+@utility text-primary {
+  color: var(--primary);
+}
+
+@utility text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+@utility text-secondary-foreground {
+  color: var(--secondary-foreground);
+}
+
+@utility text-accent-foreground {
+  color: var(--accent-foreground);
+}
+
+@utility text-destructive {
+  color: var(--destructive);
+}
+
+@utility text-destructive-foreground {
+  color: var(--destructive-foreground);
+}
+
+@utility text-card-foreground {
+  color: var(--card-foreground);
+}
+
+@utility text-popover-foreground {
+  color: var(--popover-foreground);
+}
+
+@utility text-sidebar-foreground {
+  color: var(--sidebar-foreground);
+}
+
+@utility border-border {
+  border-color: var(--border);
+}
+
+@utility border-input {
+  border-color: var(--input);
+}
+
+@utility border-sidebar-border {
+  border-color: var(--sidebar-border);
+}
+
+@utility ring-ring {
+  --tw-ring-color: var(--ring);
+}
+
+@utility rounded-lg {
+  border-radius: var(--radius);
+}
+
+@utility rounded-md {
+  border-radius: calc(var(--radius) - 2px);
+}
+
+@utility rounded-sm {
+  border-radius: calc(var(--radius) - 4px);
+}
+
+/* Base styles */
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 html {
@@ -71,7 +259,7 @@ html.light {
   color-scheme: light;
 }
 
-/* 队列添加动画 - 脉冲效果 */
+/* Queue animation */
 @keyframes queue-pulse-animation {
   0% {
     transform: scale(1);

@@ -1,10 +1,11 @@
 import { defineMongooseModel } from '#nuxt/mongoose'
+import { Schema } from 'mongoose'
 
 export const UserSchema = defineMongooseModel({
   name: 'User',
   schema: {
     email: {
-      type: 'string',
+      type: String,
       required: true,
       unique: true,
       lowercase: true,
@@ -12,7 +13,7 @@ export const UserSchema = defineMongooseModel({
       index: true
     },
     username: {
-      type: 'string',
+      type: String,
       required: true,
       unique: true,
       trim: true,
@@ -21,23 +22,23 @@ export const UserSchema = defineMongooseModel({
       index: true
     },
     password: {
-      type: 'string',
+      type: String,
       required: true,
-      select: false // Don't include password in queries by default
+      select: false
     },
     createdAt: {
-      type: 'date',
+      type: Date,
       default: Date.now
     },
     updatedAt: {
-      type: 'date',
+      type: Date,
       default: Date.now
     },
     lastLoginAt: {
-      type: 'date'
+      type: Date
     },
     isActive: {
-      type: 'boolean',
+      type: Boolean,
       default: true
     }
   },

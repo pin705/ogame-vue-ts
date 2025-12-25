@@ -1,146 +1,159 @@
-import { defineMongooseModel } from '#nuxt/mongoose'
+import { Schema } from 'mongoose'
 
 // Position sub-schema
-const PositionSchema = {
-  galaxy: { type: 'number', required: true },
-  system: { type: 'number', required: true },
-  position: { type: 'number', required: true }
-}
+export const PositionSchema = new Schema({
+  galaxy: { type: Number, required: true },
+  system: { type: Number, required: true },
+  position: { type: Number, required: true }
+}, { _id: false })
 
 // Resources sub-schema
-const ResourcesSchema = {
-  metal: { type: 'number', default: 0 },
-  crystal: { type: 'number', default: 0 },
-  deuterium: { type: 'number', default: 0 },
-  darkMatter: { type: 'number', default: 0 },
-  energy: { type: 'number', default: 0 }
-}
+export const ResourcesSchema = new Schema({
+  metal: { type: Number, default: 0 },
+  crystal: { type: Number, default: 0 },
+  deuterium: { type: Number, default: 0 },
+  darkMatter: { type: Number, default: 0 },
+  energy: { type: Number, default: 0 }
+}, { _id: false })
 
 // Ore deposits sub-schema
-const OreDepositsSchema = {
-  metal: { type: 'number', default: 0 },
-  crystal: { type: 'number', default: 0 },
-  deuterium: { type: 'number', default: 0 },
-  initialMetal: { type: 'number', default: 0 },
-  initialCrystal: { type: 'number', default: 0 },
-  initialDeuterium: { type: 'number', default: 0 }
-}
+export const OreDepositsSchema = new Schema({
+  metal: { type: Number, default: 0 },
+  crystal: { type: Number, default: 0 },
+  deuterium: { type: Number, default: 0 },
+  initialMetal: { type: Number, default: 0 },
+  initialCrystal: { type: Number, default: 0 },
+  initialDeuterium: { type: Number, default: 0 }
+}, { _id: false })
 
 // Fleet sub-schema
-const FleetSchema = {
-  lightFighter: { type: 'number', default: 0 },
-  heavyFighter: { type: 'number', default: 0 },
-  cruiser: { type: 'number', default: 0 },
-  battleship: { type: 'number', default: 0 },
-  battlecruiser: { type: 'number', default: 0 },
-  bomber: { type: 'number', default: 0 },
-  destroyer: { type: 'number', default: 0 },
-  smallCargo: { type: 'number', default: 0 },
-  largeCargo: { type: 'number', default: 0 },
-  colonyShip: { type: 'number', default: 0 },
-  recycler: { type: 'number', default: 0 },
-  espionageProbe: { type: 'number', default: 0 },
-  solarSatellite: { type: 'number', default: 0 },
-  darkMatterHarvester: { type: 'number', default: 0 },
-  deathstar: { type: 'number', default: 0 }
-}
+export const FleetSchema = new Schema({
+  lightFighter: { type: Number, default: 0 },
+  heavyFighter: { type: Number, default: 0 },
+  cruiser: { type: Number, default: 0 },
+  battleship: { type: Number, default: 0 },
+  battlecruiser: { type: Number, default: 0 },
+  bomber: { type: Number, default: 0 },
+  destroyer: { type: Number, default: 0 },
+  smallCargo: { type: Number, default: 0 },
+  largeCargo: { type: Number, default: 0 },
+  colonyShip: { type: Number, default: 0 },
+  recycler: { type: Number, default: 0 },
+  espionageProbe: { type: Number, default: 0 },
+  solarSatellite: { type: Number, default: 0 },
+  darkMatterHarvester: { type: Number, default: 0 },
+  deathstar: { type: Number, default: 0 }
+}, { _id: false })
 
 // Defense sub-schema
-const DefenseSchema = {
-  rocketLauncher: { type: 'number', default: 0 },
-  lightLaser: { type: 'number', default: 0 },
-  heavyLaser: { type: 'number', default: 0 },
-  gaussCannon: { type: 'number', default: 0 },
-  ionCannon: { type: 'number', default: 0 },
-  plasmaTurret: { type: 'number', default: 0 },
-  smallShieldDome: { type: 'number', default: 0 },
-  largeShieldDome: { type: 'number', default: 0 },
-  antiBallisticMissile: { type: 'number', default: 0 },
-  interplanetaryMissile: { type: 'number', default: 0 },
-  planetaryShield: { type: 'number', default: 0 }
-}
+export const DefenseSchema = new Schema({
+  rocketLauncher: { type: Number, default: 0 },
+  lightLaser: { type: Number, default: 0 },
+  heavyLaser: { type: Number, default: 0 },
+  gaussCannon: { type: Number, default: 0 },
+  ionCannon: { type: Number, default: 0 },
+  plasmaTurret: { type: Number, default: 0 },
+  smallShieldDome: { type: Number, default: 0 },
+  largeShieldDome: { type: Number, default: 0 },
+  antiBallisticMissile: { type: Number, default: 0 },
+  interplanetaryMissile: { type: Number, default: 0 },
+  planetaryShield: { type: Number, default: 0 }
+}, { _id: false })
 
 // Buildings sub-schema
-const BuildingsSchema = {
-  metalMine: { type: 'number', default: 0 },
-  crystalMine: { type: 'number', default: 0 },
-  deuteriumSynthesizer: { type: 'number', default: 0 },
-  solarPlant: { type: 'number', default: 0 },
-  fusionReactor: { type: 'number', default: 0 },
-  roboticsFactory: { type: 'number', default: 0 },
-  naniteFactory: { type: 'number', default: 0 },
-  shipyard: { type: 'number', default: 0 },
-  hangar: { type: 'number', default: 0 },
-  researchLab: { type: 'number', default: 0 },
-  metalStorage: { type: 'number', default: 0 },
-  crystalStorage: { type: 'number', default: 0 },
-  deuteriumTank: { type: 'number', default: 0 },
-  darkMatterCollector: { type: 'number', default: 0 },
-  darkMatterTank: { type: 'number', default: 0 },
-  missileSilo: { type: 'number', default: 0 },
-  terraformer: { type: 'number', default: 0 },
-  lunarBase: { type: 'number', default: 0 },
-  sensorPhalanx: { type: 'number', default: 0 },
-  jumpGate: { type: 'number', default: 0 },
-  planetDestroyerFactory: { type: 'number', default: 0 }
-}
+export const BuildingsSchema = new Schema({
+  metalMine: { type: Number, default: 0 },
+  crystalMine: { type: Number, default: 0 },
+  deuteriumSynthesizer: { type: Number, default: 0 },
+  solarPlant: { type: Number, default: 0 },
+  fusionReactor: { type: Number, default: 0 },
+  roboticsFactory: { type: Number, default: 0 },
+  naniteFactory: { type: Number, default: 0 },
+  shipyard: { type: Number, default: 0 },
+  hangar: { type: Number, default: 0 },
+  researchLab: { type: Number, default: 0 },
+  metalStorage: { type: Number, default: 0 },
+  crystalStorage: { type: Number, default: 0 },
+  deuteriumTank: { type: Number, default: 0 },
+  darkMatterCollector: { type: Number, default: 0 },
+  darkMatterTank: { type: Number, default: 0 },
+  missileSilo: { type: Number, default: 0 },
+  terraformer: { type: Number, default: 0 },
+  lunarBase: { type: Number, default: 0 },
+  sensorPhalanx: { type: Number, default: 0 },
+  jumpGate: { type: Number, default: 0 },
+  planetDestroyerFactory: { type: Number, default: 0 }
+}, { _id: false })
 
 // Technologies sub-schema
-const TechnologiesSchema = {
-  energyTechnology: { type: 'number', default: 0 },
-  laserTechnology: { type: 'number', default: 0 },
-  ionTechnology: { type: 'number', default: 0 },
-  hyperspaceTechnology: { type: 'number', default: 0 },
-  plasmaTechnology: { type: 'number', default: 0 },
-  computerTechnology: { type: 'number', default: 0 },
-  espionageTechnology: { type: 'number', default: 0 },
-  combustionDrive: { type: 'number', default: 0 },
-  impulseDrive: { type: 'number', default: 0 },
-  hyperspaceDrive: { type: 'number', default: 0 },
-  weaponsTechnology: { type: 'number', default: 0 },
-  shieldingTechnology: { type: 'number', default: 0 },
-  armourTechnology: { type: 'number', default: 0 },
-  astrophysics: { type: 'number', default: 0 },
-  gravitonTechnology: { type: 'number', default: 0 },
-  darkMatterTechnology: { type: 'number', default: 0 },
-  terraformingTechnology: { type: 'number', default: 0 },
-  planetDestructionTech: { type: 'number', default: 0 }
-}
+export const TechnologiesSchema = new Schema({
+  energyTechnology: { type: Number, default: 0 },
+  laserTechnology: { type: Number, default: 0 },
+  ionTechnology: { type: Number, default: 0 },
+  hyperspaceTechnology: { type: Number, default: 0 },
+  plasmaTechnology: { type: Number, default: 0 },
+  computerTechnology: { type: Number, default: 0 },
+  espionageTechnology: { type: Number, default: 0 },
+  combustionDrive: { type: Number, default: 0 },
+  impulseDrive: { type: Number, default: 0 },
+  hyperspaceDrive: { type: Number, default: 0 },
+  weaponsTechnology: { type: Number, default: 0 },
+  shieldingTechnology: { type: Number, default: 0 },
+  armourTechnology: { type: Number, default: 0 },
+  astrophysics: { type: Number, default: 0 },
+  gravitonTechnology: { type: Number, default: 0 },
+  darkMatterTechnology: { type: Number, default: 0 },
+  terraformingTechnology: { type: Number, default: 0 },
+  planetDestructionTech: { type: Number, default: 0 }
+}, { _id: false })
 
 // Build queue item sub-schema
-const BuildQueueItemSchema = {
-  id: { type: 'string', required: true },
-  type: { type: 'string', enum: ['building', 'technology', 'ship', 'defense', 'demolish'] },
-  itemType: { type: 'string', required: true },
-  targetLevel: { type: 'number' },
-  quantity: { type: 'number' },
-  startTime: { type: 'number', required: true },
-  endTime: { type: 'number', required: true }
-}
+export const BuildQueueItemSchema = new Schema({
+  id: { type: String, required: true },
+  type: { type: String, enum: ['building', 'technology', 'ship', 'defense', 'demolish'] },
+  itemType: { type: String, required: true },
+  targetLevel: { type: Number },
+  quantity: { type: Number },
+  startTime: { type: Number, required: true },
+  endTime: { type: Number, required: true }
+}, { _id: false })
 
 // Waiting queue item sub-schema
-const WaitingQueueItemSchema = {
-  id: { type: 'string', required: true },
-  type: { type: 'string', enum: ['building', 'technology', 'ship', 'defense', 'demolish'] },
-  itemType: { type: 'string', required: true },
-  targetLevel: { type: 'number' },
-  quantity: { type: 'number' },
-  priority: { type: 'number', required: true },
-  addedTime: { type: 'number', required: true },
-  planetId: { type: 'string' }
-}
+export const WaitingQueueItemSchema = new Schema({
+  id: { type: String, required: true },
+  type: { type: String, enum: ['building', 'technology', 'ship', 'defense', 'demolish'] },
+  itemType: { type: String, required: true },
+  targetLevel: { type: Number },
+  quantity: { type: Number },
+  priority: { type: Number, required: true },
+  addedTime: { type: Number, required: true },
+  planetId: { type: String }
+}, { _id: false })
 
 // Temperature sub-schema
-const TemperatureSchema = {
-  min: { type: 'number', default: -40 },
-  max: { type: 'number', default: 40 }
-}
+export const TemperatureSchema = new Schema({
+  min: { type: Number, default: -40 },
+  max: { type: Number, default: 40 }
+}, { _id: false })
+
+// Moon sub-schema
+export const MoonSchema = new Schema({
+  id: { type: String, required: true },
+  name: { type: String, required: true },
+  size: { type: Number, default: 0 },
+  fields: { type: Number, default: 1 },
+  maxFields: { type: Number, default: 1 },
+  buildings: BuildingsSchema,
+  fleet: FleetSchema,
+  defense: DefenseSchema,
+  buildQueue: [BuildQueueItemSchema]
+}, { _id: false })
 
 // Planet schema for embedding
-export const PlanetEmbeddedSchema = {
-  id: { type: 'string', required: true },
-  name: { type: 'string', required: true },
-  ownerId: { type: 'string' },
+export const PlanetEmbeddedSchema = new Schema({
+  id: { type: String, required: true },
+  name: { type: String, required: true },
+  ownerId: { type: String },
   position: PositionSchema,
   resources: ResourcesSchema,
   buildings: BuildingsSchema,
@@ -148,25 +161,12 @@ export const PlanetEmbeddedSchema = {
   defense: DefenseSchema,
   buildQueue: [BuildQueueItemSchema],
   waitingBuildQueue: [WaitingQueueItemSchema],
-  lastUpdate: { type: 'number', default: Date.now },
-  maxSpace: { type: 'number', default: 163 },
-  maxFleetStorage: { type: 'number', default: 1000 },
-  isMoon: { type: 'boolean', default: false },
-  parentPlanetId: { type: 'string' },
-  diameter: { type: 'number' },
-  jumpGateLastUsed: { type: 'number' },
+  fields: { type: Number, default: 163 },
+  maxFields: { type: Number, default: 163 },
+  temperature: TemperatureSchema,
+  image: { type: String },
+  lastUpdate: { type: Number },
   oreDeposits: OreDepositsSchema,
-  temperature: TemperatureSchema
-}
-
-// Export sub-schemas for reuse
-export {
-  PositionSchema,
-  ResourcesSchema,
-  FleetSchema,
-  DefenseSchema,
-  BuildingsSchema,
-  TechnologiesSchema,
-  BuildQueueItemSchema,
-  WaitingQueueItemSchema
-}
+  isHomeworld: { type: Boolean, default: false },
+  moon: MoonSchema
+}, { _id: false })

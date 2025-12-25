@@ -1,37 +1,38 @@
 import { defineMongooseModel } from '#nuxt/mongoose'
-import { PositionSchema, PlanetEmbeddedSchema } from './schemas'
+import { Schema } from 'mongoose'
+import { PositionSchema, PlanetEmbeddedSchema, ResourcesSchema } from './schemas'
 
 // Debris field schema
-const DebrisFieldEmbeddedSchema = {
-  id: { type: 'string', required: true },
+const DebrisFieldEmbeddedSchema = new Schema({
+  id: { type: String, required: true },
   position: PositionSchema,
   resources: {
-    metal: { type: 'number', default: 0 },
-    crystal: { type: 'number', default: 0 }
+    metal: { type: Number, default: 0 },
+    crystal: { type: Number, default: 0 }
   },
-  createdAt: { type: 'number', default: Date.now },
-  expiresAt: { type: 'number' }
-}
+  createdAt: { type: Number, default: Date.now },
+  expiresAt: { type: Number }
+}, { _id: false })
 
 export const UniverseSchema = defineMongooseModel({
   name: 'Universe',
   schema: {
     // Universe configuration
-    galaxies: { type: 'number', default: 5 },
-    systems: { type: 'number', default: 499 },
-    positions: { type: 'number', default: 15 },
+    galaxies: { type: Number, default: 5 },
+    systems: { type: Number, default: 499 },
+    positions: { type: Number, default: 15 },
     
     // NPC planets stored here (not owned by players)
     // Key format: "galaxy:system:position"
     planets: {
-      type: 'Map',
+      type: Map,
       of: PlanetEmbeddedSchema
     },
     
     // Debris fields
     // Key format: "galaxy:system:position"
     debrisFields: {
-      type: 'Map',
+      type: Map,
       of: DebrisFieldEmbeddedSchema
     }
   },
