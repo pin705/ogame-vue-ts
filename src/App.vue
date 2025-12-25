@@ -604,7 +604,7 @@
   const showUpdateDialog = ref(false)
   const updateInfo = ref<VersionInfo | null>(null)
   // 所有可用的语言选项
-  const locales: Locale[] = ['zh-CN', 'zh-TW', 'en', 'de', 'ru', 'ko', 'ja']
+  const locales: Locale[] = ['vi', 'zh-CN', 'zh-TW', 'en', 'de', 'ru', 'ko', 'ja']
   // 侧边栏状态（不持久化，根据屏幕尺寸初始化）
   // PC端（≥1024px）默认打开，移动端默认关闭
   const sidebarOpen = ref(window.innerWidth >= 1024)
